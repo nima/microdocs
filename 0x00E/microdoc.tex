@@ -1,0 +1,642 @@
+\documentclass{microdoc} %. {{
+\usepackage{multicol}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage[parfill]{parskip}
+\usepackage[usenames,dvipsnames]{color}
+
+\usepackage{float}
+\restylefloat{table}
+
+\usepackage{xstring}
+\usepackage{xspace}
+\newcommand\lTo{\ensuremath{\to}}
+\newcommand\lAlert[1]{\textcolor{Red}{---\bf{#1}---}}
+\newcommand\lEmph[1]{\textcolor{OliveGreen}{\emph{#1}}}
+\newcommand\lEng[1]{\textcolor{MidnightBlue}{{\it #1}}}
+\newcommand\lEngLit[1]{{\it[lit: \textcolor{NavyBlue}{#1}]}}
+\newcommand\lNote[1]{{\it[note: \textcolor{Gray}{#1}]}}
+\newcommand\lCiter[1]{\guillemotleft{#1}\guillemotright}
+\newcommand\lAucun{\it{\textcolor{Red}{aucun}}}
+\newcommand\lPronom[1]{\emph{\textcolor{Mulberry}{#1}}}
+\newcommand\lVerbeType[1]{\textcolor{JungleGreen}{les verbes \lCiter{#1}}}
+\newcommand\lWordEnd[1]{\lCiter{\emph{\textcolor{RoyalBlue}{-#1}}}}
+\newcommand\lMotFin[1]{\lCiter{\emph{\textcolor{BurntOrange}{-#1}}}}
+\newcommand\lASpace[1]{\IfSubStr{#1}{'}{}{\xspace}}
+\newcommand\lNeg[3]{{\textcolor{Red}{#1}\lASpace{#1}#2 \textcolor{Red}{#3}}}
+\newcommand\lMotAttr[3]{\!\!
+    \IfEqCase{#1}{
+        {f}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{f}}}% féminin
+        {m}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{m}}}% masculin
+        {s}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{s}}}% singulier
+        {p}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{p}}}% pluriel
+        {v}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{v}}}% voyelle
+        {mv}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{m+v}}}
+        {vp}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{v+p}}}
+        {vs}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{v+s}}}
+        {mp}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{m+p}}}
+        {fp}{\textcolor{CadetBlue}{#2}\lASpace{#2}#3\textcolor{CadetBlue}{:\emph{f+p}}}
+        {*}{\textcolor{CadetBlue}{#2}\lASpace{#2}\lCiter{#3}}
+    }[\PackageError{lMotAttr}{Undefined word attribute: #1}{}]
+\!\!}
+%\interfootnotelinepenalty=100000
+%. }}
+%. Setup {{
+\title{Apprendre le français}
+\author{\autha{Nima Talebi}{Autonomy Corporation Pty Ltd}}
+\docnum{0x00E}
+\version{0.1}
+\keywords{french, english, language}
+\prereqs{My notes as I learn the French language.}
+\abstract{My notes as I learn the French language.}
+
+\begin{document}
+\maketitle
+%. }}
+\section{Divers} %. {{
+\subsection{Les nombres ordinaux}
+\begin{multicols}{4}
+    premier/première\\
+    deux\lEmph{ième}\\
+    trois\lEmph{ième}\\
+    quatr\lEmph{ième}\\
+    cinqu\lEmph{ième}\\
+    six\lEmph{ième}\\
+    sept\lEmph{ième}\\
+    huit\lEmph{ième}\\
+    neuv\lEmph{ième}\\
+    dix\lEmph{ième}
+\end{multicols}
+%. }}
+\section{Exceptions importantes} %. {{
+
+\subsection{Les 2 \lCiter{je-verbe} exceptions}
+There are two verbs in french, for which the \lCiter{je} form terminates with a \lCiter{x}, rather than a \lCiter{s}:
+\begin{tabbing}
+    je \lEmph{peux} \= \lEng{(I can)}\\
+    je \lEmph{veux} \= \lEng{(I want)}
+\end{tabbing}
+
+\subsection{Les 3 \lCiter{vous-verbe} exceptions}
+There are three verbs in french, for which the \lCiter{vous} form terminates with a \lCiter{(t)es}, rather than a \lCiter{ez}:
+\begin{tabbing}
+    vous \lEmph{êtes} \= \lEng{(you are)}\\
+    vous \lEmph{faites} \= \lEng{(you do)}\\
+    vous \lEmph{dites}  \= \lEng{(you say)}\\
+\end{tabbing}
+%. }}
+\section{Sexe} %. {{
+\subsection{Les abréviations}
+\begin{table}[H]
+    \begin{tabular}{l l l}
+        de + la \ldots         & \lTo & \lMotAttr{f}{de la}{\ldots}        \\
+        de + le \ldots         & \lTo & \lMotAttr{m}{du}{\ldots}           \\
+        de + les \ldots        & \lTo & \lMotAttr{p}{des}{\ldots}          \\
+        à + la \lCiter{lieux}  & \lTo & \lMotAttr{f}{à la}{\lCiter{lieux}} \\
+        à + le \lCiter{lieux}  & \lTo & \lMotAttr{m}{au}{\lCiter{lieux}}   \\
+        à + les \lCiter{lieux} & \lTo & \lMotAttr{p}{aux}{\lCiter{lieux}}  \\
+    \end{tabular}
+\end{table}
+
+\subsection{Demander/Indiquer la destination/provenance pays}
+\label{je_viens}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        je viens \lMotAttr{*}{de}{Shiraz}      & je vais \lMotAttr{*}{à}{Shiraz}\\
+        je viens \lMotAttr{v}{d'}{Iran}        & je vais \lMotAttr{m}{au}{Iran}\\
+        je viens \lMotAttr{m}{du}{Canada}      & je vais \lMotAttr{m}{au}{Canada}\\
+        je viens \lMotAttr{m}{du}{Brésil}      & je vais \lMotAttr{m}{au}{Brésil}\\
+        je viens \lMotAttr{m}{du}{Mexique}     & je vais \lMotAttr{m}{au}{Mexique}\\
+        je viens \lMotAttr{f}{de}{Chine}       & je vais \lMotAttr{f}{en}{Chine}\\
+        je viens \lMotAttr{f}{de}{France}      & je vais \lMotAttr{f}{en}{France}\\
+        je viens \lMotAttr{p}{des}{Pays-Bas}   & je vais \lMotAttr{p}{aux}{Pays-Bas}\\
+        je viens \lMotAttr{p}{des}{Étas-Unis}  & je vais \lMotAttr{p}{aux}{Étas-Unis}\\
+    \end{tabular}
+\end{table}
+
+\subsubsection{Exemples}
+\begin{table}[H]
+    \begin{tabular}{l}
+    je pars \lMotAttr{p}{des}{Pays-Bas} et je vais \lMotAttr{f}{en}{Suède}.\\
+    je pars \lMotAttr{f}{de}{Suède} et je vais \lMotAttr{f}{en}{Russie}.\\
+    je pars \lMotAttr{f}{de}{Russie} et je vais \lMotAttr{m}{au}{Iran}.\\
+    je pars \lMotAttr{v}{d'}{Iran} et je vais \lMotAttr{f}{en}{Chine}.\\
+    je pars \lMotAttr{f}{de}{Chine} et je vais \lMotAttr{m}{au}{Japon}.\\
+    je pars \lMotAttr{m}{du}{Japon} et je vais \lMotAttr{p}{aux}{Étas-Unis}.\\
+    je pars \lMotAttr{p}{des}{Étas-Unis} et je vais \lMotAttr{m}{au}{Mexique}.\\
+    je pars \lMotAttr{m}{du}{Mexique} et je vais \lMotAttr{f}{en}{France}.\\
+    \end{tabular}
+\end{table}
+
+\subsection{Le genre des noms de pays}
+Les noms de pays qui se terminent par la lettre \lCiter{\lEmph{e}} sont féminins.\\
+Exceptions: \lMotAttr{m}{le}{Mexique}, \lMotAttr{m}{le}{Cambodge}, \lMotAttr{m}{le}{Zimbabwe}, \lMotAttr{m}{le}{Mozambique}\\
+\\
+Les noms de pays qui se terminent par la lettre \lCiter{\lEmph{s}} sont pluriels.\\
+
+\subsection{Articles définis et indéfinis}
+\begin{table}[H]
+    \begin{tabular}{l l l l l}
+        \lMotAttr{m}{un}{verre}   & \lMotAttr{f}{une}{tasse}      & \lMotAttr{p}{des}{bouteilles} &                              & \lEng{a/some}\\
+        \lMotAttr{m}{le}{café}    & \lMotAttr{f}{la}{carte}       & \lMotAttr{p}{les}{bouteilles} &                              & \lEng{the}\\
+        \lMotAttr{m}{son}{père}   & \lMotAttr{f}{sa}{mère}        & \lMotAttr{p}{ses}{parents}    &                              & \lEng{his/her}\\
+        \lMotAttr{m}{mon}{père}   & \lMotAttr{f}{ma}{mère}        & \lMotAttr{p}{mes}{parents}    &                              & \lEng{my}\\
+        \lMotAttr{m}{ton}{père}   & \lMotAttr{f}{ta}{mère}        & \lMotAttr{p}{tes}{parents}    &                              & \lEng{your (informal)}\\
+        \lMotAttr{m}{votre}{père} & \lMotAttr{f}{votre}{mère}     & \lMotAttr{p}{vos}{parents}    &                              & \lEng{your (formal)}\\
+        \lMotAttr{m}{notre}{père} & \lMotAttr{f}{notre}{mère}     & \lMotAttr{p}{nos}{parents}    &                              & \lEng{our}\\
+        \lMotAttr{m}{leur}{père}  & \lMotAttr{f}{leur}{mère}      & \lMotAttr{p}{leurs}{parents}  &                              & \lEng{their}\\
+        \lMotAttr{m}{ce}{tableau} & \lMotAttr{f}{cette}{poubelle} & \lMotAttr{p}{ces}{élèves}     & \lMotAttr{mv}{cet}{élèphant} & \lEng{this/these}\\
+        \lMotAttr{m}{au}{parc}    & \lMotAttr{f}{à la}{banque}    & \lMotAttr{p}{aux}{jardins}    & \lMotAttr{v}{à l'}{hôtel}    & \lEng{to the \lCiter{place}}\\
+    \end{tabular}
+\end{table}
+
+\subsubsection{En utilisant \emph{aux/au/à la/à l'}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        je vais \lMotAttr{m}{au}{parc}              & \lEng{I am going to the park}\\
+        je vais \lMotAttr{f}{à la}{banque}          & \lEng{I am going to the bank}\\
+        je vais \lMotAttr{v}{à l'}{hôtel}           & \lEng{I am going to the hotel}\\
+        je vais \lMotAttr{p}{aux}{jardins}          & \lEng{I am going to the gardens}\\
+        je dois \lPronom{me} rendre \lMotAttr{v}{à l'}{hôtel} & \lEng{I have to get myself to the hotel}\\
+        je dois aller \lMotAttr{v}{à l'}{hôtel}     & \lEng{I have to go to the hotel}\\
+        je dois aller \lMotAttr{m}{au}{café}        & \lEng{I have to go to the cafe}\\
+    \end{tabular}
+\end{table}
+
+\subsection{Negation Rules}
+\subsubsection{En utilisant \emph{Il y a} et \emph{Il n'y a pas}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        Il y a \lMotAttr{m}{un}{verre}              & \lEng{There is a glass}\\
+        Il y a \lMotAttr{f}{une}{tasse}             & \lEng{There is a cup}\\
+        Il y a \lMotAttr{p}{des}{bouteilles}        & \lEng{There are some bottles}\\
+        Il \lNeg{n'}{y a}{pas} \lMotAttr{vs}{d'}{hôtel}       & \lEng{There is no hotel}\\
+        Il \lNeg{n'}{y a}{pas} \lMotAttr{vp}{d'}{hôtels}      & \lEng{There are no hotels} XXX (TM)\\
+        Il \lNeg{n'}{y a}{pas} \lMotAttr{s}{de}{parking}      & \lEng{There is no parking}\\
+        Il \lNeg{n'}{y a}{pas} \lMotAttr{p}{de}{toilettes}    & \lEng{There are no toilets} XXX (TM)\\
+    \end{tabular}
+\end{table}
+
+\subsection{\lMotFin{me} mots}
+Words ending in \lMotFin{me} are all \emph{masculine}, par exemple: {\it
+    le probleme,
+    le systeme,
+    etc
+}.
+
+\subsection{\lMotFin{té} mots}
+Words ending in \lMotFin{té} are all \emph{feminine}, par exemple: {\it
+    la liberté,
+    la difficulté,
+    la facilité,
+    la possibilité,
+    la oppotunité,
+    la specialité,
+    la qualité,
+    la quantité,
+    la societé,
+    etc
+}.\\
+
+Also note that these words are the source from which the \lWordEnd{ty} words in english originated from.
+
+\subsection{\lMotFin{ance} et \lMotFin{ence} mots}
+Words ending in \lMotFin{ance} et \lMotFin{ence} are all \emph{feminine}, par exemple: {\it
+    la différence,
+    la conséquence,
+    la préférence,
+    etc
+}.
+%. }}
+\section{Important Verbes} %. {{
+
+\subsection{Faire et les activités}
+Faire + du/de la/de l'/des + \lCiter{activité sportive} ou \lCiter{culturelle}.\\
+
+\subsubsection{\lCiter{Je fais} est synonyme de \lCiter{je practique}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        je fais \lMotAttr{m}{du}{sport}               & je practique \lMotAttr{m}{du}{sport}\\
+        tu fais \lMotAttr{m}{du}{judo}                & je practique \lMotAttr{m}{du}{judo}\\
+        vous faites \lMotAttr{f}{de la}{natation}     & je practique \lMotAttr{f}{de la}{natation}\\
+        il fait \lMotAttr{v}{de l'}{escalade}         & je practique \lMotAttr{v}{de l'}{escalade}\\
+        elle fait \lMotAttr{p}{des}{arts martiaux}    & je practique \lMotAttr{p}{des}{arts martiaux}\\
+        nous faisons \lMotAttr{p}{des}{pilates}       & je practique \lMotAttr{p}{des}{pilates}\\
+    \end{tabular}
+\end{table}
+
+\subsubsection{\lCiter{Je fais} est synonyme de \lCiter{je travaille}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        ils font \lMotAttr{p}{les}{devoirs} de français & je travaille \lMotAttr{p}{les}{devoirs} de français \lAlert{this is wrong, can I have a correct example?}\\
+        elles font \lMotAttr{p}{des}{courses}           & je travaille \lMotAttr{p}{des}{course} \lAlert{this is wrong, can I have a correct example?}\\
+    \end{tabular}
+\end{table}
+
+\subsubsection{\lCiter{Je fais} est synonyme de \lCiter{je prépare}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        je fais \lMotAttr{m}{du}{café}                & je prépare \lMotAttr{m}{du}{café}\\
+        tu fais \lMotAttr{f}{de la}{cuisine}          & je prépare \lMotAttr{f}{de la}{cuisine}\\
+    \end{tabular}
+\end{table}
+
+\subsection{Aller et les lieux}
+Aller + au/à la/à l'/aux + \lCiter{lieux}.\\
+
+\begin{table}[H]
+    \begin{tabular}{l l}
+        je vais \lMotAttr{m}{au}{restaurant}\\
+        tu vas \lMotAttr{m}{au}{cinéma}\\
+        nous allons \lMotAttr{m}{au}{marché}\\
+        vous allez \lMotAttr{f}{à la}{montagne}\\
+        il va \lMotAttr{f}{à la}{piscine}\\
+        elle va \lMotAttr{f}{à la}{compagne}\\
+        ils vont \lMotAttr{f}{à la}{mer}\\
+        elles vont \lMotAttr{v}{à l'}{étranger}\\
+        je vais \lMotAttr{p}{aux}{chutes du Niagra}\\
+    \end{tabular}
+\end{table}
+
+\subsection{Aimer et les goûts}
+Aimer/détester/adorer + le/la/l'/les + \lCiter{noune}.\\
+
+\begin{table}[H]
+    \begin{tabular}{l l}
+        j'aime \lMotAttr{m}{le}{chocolat noir}\\
+        tu aimes \lMotAttr{f}{la}{nature}\\
+        nous aimons \lMotAttr{v}{l'}{argent}\\
+        vous aimez \lMotAttr{p}{les}{animaux}\\
+    \end{tabular}
+\end{table}
+
+Aimer/détester/adorer + \lVerbeType{infinitive}\\
+\begin{table}[H]
+    \begin{tabular}{l l l}
+        j'adore \ldots                          & \lEng{I adore \ldots}               & ${\heartsuit\heartsuit\heartsuit\heartsuit}$\\
+        j'aime \ldots                           & \lEng{I love \ldots}                & ${\heartsuit\heartsuit\heartsuit}$\\
+        j'aime bien \ldots                      & \lEng{I like \ldots}                & ${\heartsuit\heartsuit}$\\
+        j'aime un peu \ldots                    & \lEng{I somewhat like \ldots}       & ${\heartsuit}$\\
+        je \lNeg{n'}{aime}{pas} \ldots          & \lEng{I don't like \ldots}          & $\cancel{\heartsuit}$\\
+        je \lNeg{n'}{aime}{pas} du tout \ldots  & \lEng{I don't at all like \ldots}   & $\cancel{\heartsuit\heartsuit}$\\
+        j'ai horreur \ldots                     & \lEng{I hate \ldots}                & $\cancel{\heartsuit\heartsuit\heartsuit}$\\
+        je deteste \ldots                       & \lEng{I detest \ldots}              & $\cancel{\heartsuit\heartsuit\heartsuit\heartsuit}$\\
+    \end{tabular}
+\end{table}
+
+%. }}
+\section{Les pronoms} %. {{
+{\bf Noun}:
+A noun is anything that when preceded by a "my" makes sense, such as my dog,
+my happiness, my life.\\
+
+{\bf Pronoun}:
+A pronoun is a proxy noun, and it is used to replace a noun, such as "it",
+"I", "you", "him", "he", "she", "her".\\
+
+{\bf Adverb}:
+An adverb can modify a verb, an adjective, another adverb, a phrase, or a
+clause. An adverb indicates manner, time, place, cause, or degree and
+answers questions such as "how," "when," "where," "how much".\\
+
+\subsection{Le tableau des pronoms personal}
+\footnotetext[1]{In the imperative, me and te sometimes change to moi and toi.}
+\begin{table}[H]
+    \begin{tabular}{l l l l l}
+        Subject & Direct Object      & Indirect Object    & Reflexive          & Stressed\\
+        \hline
+        je      & me\footnotemark[1] & me\footnotemark[1] & me\footnotemark[1] & moi\\
+        tu      & te\footnotemark[1] & te\footnotemark[1] & te\footnotemark[1] & toi\\
+        il      & le                 & lui                & se                 & lui\\
+        elle    & la                 & \lAucun            & \lAucun            & elle\\
+        on      & \lAucun            & \lAucun            & \lAucun            & soi\\
+        nous    & nous               & nous               & nous               & nous\\
+        vous    & vous               & vous               & vous               & vous\\
+        ils     & les                & leur               & se                 & eux\\
+        elles   & \lAucun            & \lAucun            & \lAucun            & elles\\
+    \end{tabular}
+\end{table}
+
+\subsection{Le tableau des pronoms}
+%Note that "there" ("la") is not a verb, but an adverb, same as "today", "yesterday", "upstairs", "here", the french pronoun for it is "y".
+\begin{table}[H]
+    \begin{tabular}{l l l}
+        \lEng{her/she/it}     & elle        & \lPronom{la}\\
+        \lEng{him/he/it}      & il          & \lPronom{le}\\
+        \lEng{(to) him/her}   & \lAucun     & \lPronom{lui}\\
+        \lEng{them}           & \lAucun     & \lPronom{les}\\
+        \lEng{(to) them}      & \lAucun     & \lPronom{leur}\\
+        \lEng{there}          & la          & \lPronom{y}\\
+        \lEng{some/any of it} & la          & \lPronom{en}\\
+        \lEng{me}             & je          & \lPronom{me}\\
+        \lEng{you}            & vous        & \lPronom{vous}\\
+        \lEng{us}             & nous        & \lPronom{nous}\\
+    \end{tabular}
+\end{table}
+
+Now let's see how these prounouns are used (they've been highlight in a
+different color); note that some examples that follow demonstrate
+double-pronouns.
+
+\begin{table}[H]
+    \begin{tabular}{l l}
+        c'est pour lui                                  & \lEng{it is for him}\\
+        c'est pour elle                                 & \lEng{it is for her}\\
+        avec lui                                        & \lEng{with him}\\
+        avec elle                                       & \lEng{with her}\\
+        à lui                                         & \lEng{to him}\\
+        à elle                                        & \lEng{to her}\\
+        il va \lPronom{m'}apporter le livre             & \lEng{He is going to bring me the book}\\
+        je vais \lPronom{lui} apporter le livre         & \lEng{I'm going to bring him/her the book}\\
+        je vais apporter le livre à lui               & \lEng{I'm going to bring the book to him}\\
+        je vais apporter le livre à elle              & \lEng{I'm going to bring the book to her}\\
+        je vais \lPronom{l'}apporter                    & \lEng{I'm going to bring it}\\
+        je vais \lPronom{le lui} apporter               & \lEng{I'm going to bring it to him}\\
+        \lPronom{me le} donner                          & \lEng{give it to me}\\
+        vous pouvez \lPronom{me le} donner              & \lEng{you can give it to me}\\
+        vous ne pouvez pas \lPronom{me le} donner       & \lEng{you can't give it to me}\\
+        pouvez-vous \lPronom{le lui} donner             & \lEng{can you give it to him/her}\\
+        pouvez-vous \lPronom{me le} donner              & \lEng{can you give it to me}\\
+    \end{tabular}
+\end{table}
+
+So before a verb, "lui" means "to him" or "to her", but otherwise it simply means "him", and "elle" means "her".
+
+The rule for double pronouns is this: if it begins with an "l", it goes last; so where we have "me" and "le"
+as the pronouns, the "le" goes last.  When you have more than one "l", then "lui" goes last.
+
+%. }}
+\section{Les temps (tenses)} %. {{
+\subsection{Le temps passé}
+There are 3 ways in English to express the past tense, but only one in French:
+\begin{table}[H]
+    \begin{tabular}{l l}
+        \lEng{I prepared}       & j'ai preparé\\
+        \lEng{I did prepare}    & j'ai preparé\\
+        \lEng{I have prepared}  & j'ai preparé\\
+    \end{tabular}
+\end{table}
+
+\subsection{Le temps présent}
+Again, there are 3 ways in English to express the present tense, and again,
+there is only one in French:
+\begin{table}[H]
+    \begin{tabular}{l l}
+        \lEng{you think}        & vous pensez\\
+        \lEng{you do think}     & vous pensez\\
+        \lEng{you are thinking} & vous pensez\\
+    \end{tabular}
+\end{table}
+
+\subsection{Le temps futur}
+In English there are 2 ways to express the future; in French we have the
+same 2, and a 3rd option:
+
+\begin{table}[H]
+    \begin{tabular}{l l}
+        \lEng{I am going to see you tomorrow}                    & je vais vous voir demain \lNote{most common}\\
+        \lEng{\st{I see you tomorrow}} \lNote{incorrect English} & je vous voir demain \lNote{very common}\\
+        \lEng{I will see you tomorrow}                           & je vous voirai demain \lNote{not very common}\\
+    \end{tabular}
+\end{table}
+
+%    1. Use "to go":  #. He's going to eat
+%        Je vais le faire plus tard
+%        Il/Elle va le lui donner plus tard
+%        Tu va me le donner
+%        Ils/Elles vont m'attendre
+%        Nous allons ...
+%        Vous allez ...
+%    2. Use "to have" for the "will" tense               #. He will eat
+%        Il/Elle/Tu + manger ++ a = Il mangera           #. lit: he to-eat has; means: He will eat
+%        Je + manger ++ ai = Je mangerai                 #. lit: I to-eat have; means: I will eat
+%        Vous + manger ++ (av)ez = Vous mangerez
+%        Nous + manger ++ (av)ons = Nous mangerons
+%        Ils/Elles + manger ++ (ont) = Ils mangeront
+%
+%        For "er" and "ir" verbs, use as is, for the "re" verbs, remove the ending "e" first; for example:
+%            Il attendra
+%            J'attendrai
+%            Nous attendrons
+%            Ils attendront
+%            Vous attendrez
+%
+%    Finally, in English "will" always expresses the future tense, with one exception; when
+%    the sentense or phrase begins with "will" - which instead expresses a request, rather than
+%    the future tense.  Of course this excludes things such as "when will you", or "how will you"
+%    - and of course these phrases do not start with "will".
+%. }}
+
+\section{Food} %. {{
+\begin{table}[H]
+    \begin{tabular}{l l}
+        le petit déjeuner                        & \lEng{breakfast}\\
+        le déjeuner                              & \lEng{lunch}\\
+        le dîner                                 & \lEng{dinner}\\
+        le café                                  & \lEng{coffee}\\
+    \end{tabular}
+\end{table}
+
+In french, rather than \emph{being} {\it hungry} or {\it thirsty}, you \emph{have} {\it hunger} or {\it thirst}:
+\begin{table}[H]
+    \begin{tabular}{l l}
+        j'ai soif   & \lEng{I'm thirsty}\\
+        j'ai faim   & \lEng{I'm hungry}\\
+    \end{tabular}
+\end{table}
+%. }}
+\section{Questions et réponses} %. {{
+\subsection{Comment/Combien \lEng{(How/How much)}} %. {{
+\subsubsection{Combien coûte \ldots \lEng{(How much)}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        \lEmph{combien coûte} \ldots?                    & \lEng{how much is \ldots?}; \lEngLit{how much costs}\\
+        \lEmph{combien ça fait}?                         & \lEng{how much is that?}\\
+        \lEmph{combien ça coûte}?                        & \lEng{how much does it cost?}\\
+        \lEmph{combien coûte} une chambre pour une nuit? & \lEngLit{how much costs a room for one night?}\\
+        ça fait 60 euros par personne                    & \lEng{that's 60 euros per person}\\
+        \lEmph{combien coûte} le petit déjeuner?         & \lEng{how much costs (the) breakfast?}\\
+        le petit déjeuner est inclus                     & \lEng{breakfast is included}\\
+    \end{tabular}
+\end{table}
+
+\subsubsection{Combien de \ldots \lEng{(How many)}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        \emph{combien de} \ldots?                       & \lEngLit{How much of \ldots}\\
+        \emph{combien de} temp dure \ldots?             & \lEng{how long lasts \ldots} \lEngLit{how much of time lasts \ldots?}\\
+        pour \emph{combien de} personnes?               & \lEng{for how many people?}\\
+    \end{tabular}
+\end{table}
+
+\subsection{\lEng{(Which)}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        ça s'il vous plaît                              & \lEng{This please}\\
+    \end{tabular}
+\end{table}
+%. }}
+\subsection{Où \lEng{(Where)}} %. {{
+
+\subsubsection{En utilisant \emph{où}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        où                                     & \lEng{where?}\\
+        où est                                 & \lEng{where is?}\\
+        où est-ce que                          & \lEng{where is it that?}\\
+        où sont                                & \lEng{where are?}\\
+        vous êtes d'où                         & \lEng{where are you from?} \lEngLit{you are from where?}\\
+        d'où venez-vous                        & \lEng{where are you from?} \lEngLit{from where come you?}\\
+        pour aller a \ldots                    & \lEng{in order to go to \ldots} \lEngLit{for to go to \ldots}\\
+    \end{tabular}
+\end{table}
+
+See \ref{je_viens} for examples of \lEng{I come from \ldots}.
+
+\subsubsection{Instructions \lEng{(Directions)}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        est-ce que \ldots est \lEmph{proche}?           & \lEng{is it that \ldots is nearby?}\\
+        \lEmph{dans}                                    & \lEng{in}\\
+        \lEmph{près de} \ldots                          & \lEng{close to \ldots}\\
+        \lEmph{loin de} \ldots                          & \lEng{far from \ldots}\\
+        \lEmph{devant}                                  & \lEng{before/in front of/ahead of}\\
+        \lEmph{derrière}                                & \lEng{after/behind}\\
+        \lEmph{en face de} \ldots                       & \lEng{accross from/facing/opposite}\\
+        \lEmph{à côté de} \ldots                        & \lEng{next to \ldots}\\
+        \lEmph{sur}                                     & \lEng{on}\\
+        \lEmph{sous}                                    & \lEng{under}\\
+        \lEmph{prendre} la deuxième (rue) à gauche      & \lEng{take the second street to the left}\\
+        \lEmph{aller/tourner} à droite                  & \lEng{go/turn right}\\
+        \lEmph{aller/continuer tout droit}              & \lEng{go/continue straight}\\
+        aller/tourner \lEmph{tout de suite} à gauche    & \lEng{go/turn immediately left}\\
+        \lEmph{descendre} la rue                        & \lEng{go down the street}\\
+        \lEmph{traverser} la rue                        & \lEng{cross the street}\\
+        \lEmph{traverser} la place                      & \lEng{cross the square}\\
+        \lEmph{à gauche de} \ldots                      & \lEng{to the left of \ldots}\\
+        \lEmph{à droite de} \ldots                      & \lEng{to the right of \ldots}\\
+        \lEmph{tourner à gauche} aux feux               & \lEng{turn left at the lights}\\
+        \lEmph{tourner à droite} au carrefour           & \lEng{turn right at the crossroad}\\
+        \lEmph{tourner à droite} au rond-point          & \lEng{turn right at the roundabout}\\
+        \lEmph{jusqu'au bout} de la rue                 & \lEng{until the end of the street}\\
+        \lEmph{passer} le pont                          & \lEng{cross the bridge}\\
+        \lEmph{passer devant} la banque                 & \lEng{go past the bank}\\
+    \end{tabular}
+\end{table}
+
+\subsubsection{\ldots \lEng{(Transport)}}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        \lMotAttr{v}{l'}{avion}                         & \lEng{the plane}\\
+        \lMotAttr{m}{le}{train} est déjà partir         & \lEng{the train is already gone}\\
+        vous attendez \lMotAttr{m}{un}{taxi}?           & \lEng{are you waiting for a taxi?}\\
+        \lMotAttr{m}{un}{autobus}                       & \lEng{a bus}\\
+        \lMotAttr{m}{un}{vélo}                          & \lEng{a bike}\\
+        \lMotAttr{f}{une}{voiture}                      & \lEng{a car}\\
+        \lMotAttr{f}{une}{moto}                         & \lEng{a motorbike}\\
+    \end{tabular}
+\end{table}
+
+%\subsubsection{Itinéraire}
+%Utiliser \lVerbeType{er} pour oral ou ecrit.\\
+%Utiliser \lVerbeType{ez} pour a l'ecrit seulement.\\
+%. }}
+\subsection{Quand \lEng{(When)}} %. {{
+\begin{table}[H]
+    \begin{tabular}{l l}
+        le lundi                                 & \lEng{(On Monday}\\
+        chaque lundi                             & \lEng{Each Monday}\\
+        tout les lundis                          & \lEng{Every Monday}\\
+        je ne travaille pas \lEmph{en ce moment} & \lEng{I don't work at the moment}
+    \end{tabular}
+\end{table}
+%. }}
+
+%. mais il est fermé aujourd'hui
+%. mais il est ouvert aujourd'hui
+%. quel dommage!
+%. ça aller excitant
+%. amusez-vous bien
+%. je veux faire ==? je voudrais
+
+%. en voyage d'affaire            business trip
+%. un taxi pour le centre ville   a taxi *to* the city center
+%. pour affaire                   *on* business; affaire also means things, stuff, and business
+%. quel est votre metier          what is your job?
+
+%. est-ce que c'est votre valise
+%. le valise bleu \lEmph{est a moi}    \lEngLit{the suitcase blue is to me} (belongs to me)
+%. le valise bleu \lEmph{est a vous}   \lEngLit{the suitcase blue is to you} (belongs to you)
+%. avez-vous fait votre valise \lEmph{vous même}
+%. vous voulez partager                \lEng{You want to share}
+%. c'est (ma compagnie) qui paye
+
+%. le lundi == tout les lundis == chaque lundi
+
+%. `on' simplifies sentences: {{
+%. j'espere que nous nous arrêtons bientot
+%. j'espere qu'on s'arrête bientot
+%. qu'est-ce que nous nous faisons
+%. qu'est-ce que nous allons faire
+%. qu'est-ce qu'on fait
+%. on fait un pause (we take a break)
+%. j'en suis sûr (I'm sure of it)
+%. }}
+
+\section{Commun} %. {{
+
+\subsection{Salutations}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        bienvenue                              & \lEng{welcome}\\
+        suivant s'il vous plaît                & \lEng{next please}\\
+    \end{tabular}
+\end{table}
+
+\subsection{Désolée être \ldots}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        désolée être en retard                 & \lEng{sorry to be late}\\
+        désolée être si fatigue                & \lEng{sorry to be so tired}\\
+    \end{tabular}
+\end{table}
+
+\subsection{J'ai besoin d\ldots}
+In french, there is no verb for \emph{need}, but a noun; hence to say that
+you \emph{need} something, you need to say that you \emph{have need of} it:
+\begin{table}[H]
+    \begin{tabular}{l l}
+        j'ai besoin de ...                                    & \lEng{I need \ldots} \lEngLit{I have need of \ldots}\\
+        j'ai besoin \lMotAttr{s}{de}{boisson}                 & \lEngLit{I have need of drink}\\
+        j'ai besoin \lMotAttr{s}{de}{boire} quelque chose     & \lEng{I need to drink something}\\
+        j'ai besoin \lMotAttr{v}{d'}{aide}                    & \lEng{I need help}\\
+        j'ai besoin \lMotAttr{v}{d'}{un} café                 & \lEng{I need a coffee}\\
+        j'ai besoin \lMotAttr{v}{d'}{aller} aux toilettes     & \lEng{I need to go to the toilets}\\
+        j'ai besoin \lMotAttr{m}{du}{téléphone}               & \lEng{I need the telephone}\\
+        j'ai besoin \lMotAttr{f}{de la}{maison}               & \lEng{I need the house}\\
+        j'ai besoin \lMotAttr{p}{des}{toilettes}              & \lEng{I need the toilets}\\
+    \end{tabular}
+\end{table}
+
+\subsection{Expressing of Feeling}
+\begin{table}[H]
+    \begin{tabular}{l l}
+        j'espère bien                          & \lEng{I hope so}\\
+        je crois bien que \ldots encore        & \lEng{I believe that \ldots still \ldots}\\
+        je \lNeg{ne}{pense/crois}{pas}         & \lEng{I don't think/believe so}\\
+        je comprends tout                      & \lEng{I understand everything}\\
+        je \lNeg{ne}{comprends}{rien}          & \lEng{I understand nothing}\\
+        ça aller génial                        & \lEng{that sounds brilliant} \lEngLit{that goes brilliant}\\
+        ça aller ennuyeux                      & \lEng{that sounds boring}\\
+        ça serait sympa/sympathique            & \lEng{that sounds great}\\
+        voilà                                  & \lEng{here it is}\\
+        on y va                                & \lEng{here we go}\\
+        moi aussi                              & \lEng{me too} \lEngLit{me also}\\
+        merveilleux                            & \lEng{marvellous}\\
+        malheureusement                        & \lEng{unfortunately}\\
+        merci d'être venu                      & \lEng{thankyou for coming}\\
+    \end{tabular}
+\end{table}
+
+\end{document}
+%. }}

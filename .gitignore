@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+*.log
+*.aux
+*.toc
+*.pdf
+0x*/Makefile

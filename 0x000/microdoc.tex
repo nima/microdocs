@@ -1,0 +1,70 @@
+\documentclass{microdoc}
+
+\title{The Quadratic Formula}
+\author{\authab{Robert Smith}{Quad's Printing}{quadricode@gmail.com}\\
+        \autha{Nima Talebi}{Autonomy Corporation Pty Ltd}}
+\docnum{0x001}
+\version{0.1}
+\keywords{quadratic formula, polynomials, roots}
+\prereqs{A basic knowledge of algebra is needed as well as the method
+  of completing the square.}
+\abstract{The so called \emph{quadractic formula} is an expression
+  able to compute the roots of a second-degree polynomial in
+  essentially $O(1)$ time.}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+The basic premise of this microdoc is to derive that given a monic
+polynomial\footnote{A \emph{monic polynomial} is a polynomial whose
+  leading coefficient is $1$.} $f(x)=x^2+bx+c$, the values of $x$ such
+that $f(x)=0$ are \[x_{1,2}= \frac{-b\pm\sqrt{b^2-4c}}{2}.\] This is
+typically learned in the sixth or seventh year of school and proves to
+be an invaluable tool in all fields of science and mathematics, for it
+can compute things from trajectory solutions to factorizations.
+
+\subsection{A Computer Implementation}
+We can implement such a function in the C programming language
+easily. Since C cannot return two values in a native fashion, we must
+indicate which solution we want via a number \verb|soln|. We also
+specify the \emph{discriminant}, $b^2-4c$, which signifies how many
+roots of $f(x)$ exist, if any. Let $D$ be the discriminant. Then in general,
+\begin{itemize}
+  \item If $D>0$, there are two real roots,
+  \item if $D=0$, there is exactly one real root,
+  \item if $D<0$, there are no real roots.
+\end{itemize}
+Note that the case when $D=0$, we have
+\begin{align*}
+  \frac{-b\pm\sqrt{b^2-4c}}{2} &= \frac{-b\pm\sqrt{D}}{2}\\
+                               &= \frac{-b\pm\sqrt{0}}{2}\\
+                               &= \frac{-b\pm 0}{2}\\
+                               &= \frac{-b}{2},
+\end{align*}
+so the plus-or-minus vanishes. If $D<0$, clearly we have the root of a
+negative number, which requires the use of another class of numbers
+called \emph{imaginary numbers}\footnote{Essentially, we define
+  $\sqrt{-1} = i$, where $i$ is called the \emph{imaginary unit}, and
+  so $\sqrt{-D}$, where $D>0$, is equivalent to the imaginary number
+  $\sqrt{-1}\sqrt{D}=i\sqrt{D}$.}
+
+The implementation in figure \ref{fig:quadC} does not use imaginary
+numbers, for the implementation would require extra definitions.
+\begin{figure}[h]
+\centering
+\begin{lstlisting}[language=C,basicstyle=\ttfamily\footnotesize]
+float quadratic_formula(float b, float c, int soln)
+{
+    float discriminant;
+    discriminant = b*b - 4.0*c;
+    if (1 == soln)
+        return (-b + sqrt(discriminant))/2.0;
+    else
+        return (-b - sqrt(discriminant))/2.0;
+}
+\end{lstlisting}
+\caption{Implementation of the quadratic formula.}
+\label{fig:quadC}
+\end{figure}
+\end{document}

@@ -1,0 +1,29 @@
+%!TEX TS-program = XeLaTeX
+%!TEX encoding = UTF-8 Unicode
+%\documentclass{scrartcl}
+%\documentclass[namedreferences]{kluwer}
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x006}
+\newcommand{\theVersion}{0.1}
+\newcommand{\theTitle}{Number Theory}
+\newcommand{\theKeywords}{mathematics}
+\newcommand{\theAbstract}{\LaTeX.}
+
+\input{header}
+%-------------------------------------------------------------------------------
+
+\section{General Theorems}
+
+\subsection{Relative Primes}
+
+\begin{axiom}
+$n$ and $m$ are \emph{relative primes} if their only common divisor is $1$.
+\end{axiom}
+
+\begin{theorem}
+if $a$ and $n$ are relatively prime, then there exists a unique number $i \mod n \suchthat ab \equiv 1 \mod n$
+\end{theorem}
+
+%-------------------------------------------------------------------------------
+\input{footer}

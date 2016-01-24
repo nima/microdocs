@@ -1,0 +1,559 @@
+%!TEX TS-program = LaTeX
+%!TEX encoding = UTF-8 Unicode
+
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x004}
+\newcommand{\theVersion}{0.4}
+\newcommand{\theTitle}{Transitive Noninterference Tutorial}
+\newcommand{\theKeywords}{security, assignment}
+\newcommand{\theAbstract}{This tutorial is based on the material covered in \cite{vdML5b10}.  For questions 3-5, we make references to judgements and typing systems defined in \cite{SY08}, and elaborated upon in \cite{MD003}}
+
+\input{header}
+\raggedbottom
+
+\section{\question{1}{5}}
+Let the system $\Fancy{M}$ denote the finite state machine which bounds this particular problem space.
+
+Let $\set{D}$ denote the set of security domains (agents), where $\set{D} = \{L, H\}$.  The set $\set{S}$ defines all possible states that $\Fancy{M}$ can hold, and each state is defined by the tuple $(b, l, w) \in \set{S}$. The state tuple components $b, l, w$ are boolean variables;  $b$ and $l$ are $H$ variables, while $w$ is a $L$ variable.
+
+Let the set $\set{A}_H = \{ \lLock, \lUnlock, \lWriteZ, \lWriteO \}$ define the actions that $H$ is capable of executing, while $\set{A}_H = \{ \lWriteZ, \lWriteO \}$ defines the set of actions that $L$ is capable of executing.
+
+The following set of rules then define the dynamics of the state machine $\Fancy{M}$, depicted in figure \autoref{fig:fsm}.  The format of each rule is $s_0 \cdot a = s_1$ followed restrictions if any, where $s_0$ denotes the initial state, $a$ denotes the action, and $s_1$ the final state after the action has been performed.
+
+\begin{figure}[here]
+    \centerline{\includegraphics[width=16pc]{fsm.pdf}}
+    \caption{The finite state machine $\Fancy{M}$.}
+    \label{fig:fsm}
+\end{figure}
+
+\begin{subequation}[arabic]
+Agent $H$ can perform the following actions with the respective consequences:
+\begin{flalign}
+    (b, l, w) \cdot \lLock &= (b, 1, w) \quad \forall b, l, w\\
+    (b, l, w) \cdot \lUnlock &= (b, 0, w) \quad \forall b, l, w\\
+    (b, l, w) \cdot \lWriteZ &= (0, l, w) \Iff l = 1\\
+    (b, l, w) \cdot \lWriteO &= (1, l, w) \Iff l = 1\\
+    \nonumber
+\end{flalign}
+
+Agent $L$ can perform the following actions with the respective consequences:
+\begin{flalign}
+    (b, l, w) \cdot \lWriteZ &= \left\{
+        \begin{array}{l l}
+            (0, l, 0) &\quad \Iff l = 0\\
+            (b, l, 0) &\text{ otherwise}\\
+        \end{array}
+    \right.\\
+    (b, l, w) \cdot \lWriteO &= \left\{
+        \begin{array}{l l}
+            (1, l, 1) &\quad \Iff l = 0\\
+            (b, l, 1) &\text{ otherwise}\\
+        \end{array}
+    \right.\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+In line with the above rules we define the following observations:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \lobs_L(b, l, w) &= (w)\\
+    \lobs_H(b, l, w) &= (b, l)\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+\begin{lemma}
+Prove that this system $\Fancy{M}$ is secure by showing that there exists an unwinding on this system; That is, define the unwinding and prove that it is an \emph{equivalence relation} satisfying \lOC, \lSC, and \lLR.
+\end{lemma}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 1)}
+\begin{subequation}[arabic]
+We begin with the following definition from \cite{vdML5b10}; If some function $f$ exists that satisfies the following requirement, then there will also exist an equivalence relation $\sim$ on $\set{S}$:
+\begin{flalign}
+    \forall s_1, s_2 \in \set{S}
+        \colon s_1 \sim_d s_2 \ \If f(d, s_1) = f(d, s_2) \Where d \in \set{D}\label{eq:q1d1}\\
+    \nonumber
+\end{flalign}
+
+We assume that $f$ does indeed exist, and intuitively define it as follows:
+\begin{flalign}
+    f(d, s) = \lobs_d(s) = \left\{
+        \begin{array}{l l}
+            (w) &\quad \Where d = l\\
+            (b, l) &\quad \Where d = h\\
+        \end{array}
+        \right.\\
+    \nonumber
+\end{flalign}
+
+The fact that $f$ exists \eqref{eq:q1d1} is actually already proof that the binary relation on $\sim$ is \emph{reflexiv}, \emph{transitiv}, and \emph{symmetric};  however we will explicitly show this for completeness:
+
+First reflexivity:
+\begin{flalign*}
+    f(s, d) = f(s, d)\\
+    \therefore s \sim_d s\\
+    \nonumber
+\end{flalign*}
+
+Then symmetry:
+\begin{flalign*}
+    f(s_1, d) = f(s_2, d) &\Rightarrow f(s_2, d) = f(s_1, d)\\
+    \therefore s_1 \sim_d s_2 &\Rightarrow s_2 \sim_d s_1\\
+    \nonumber
+\end{flalign*}
+
+And finally transitivity:
+\begin{flalign*}
+    f(s_1, d) \leq f(s_2, d) \leq f(s_3, d) &\Rightarrow f(s_1, d) \leq f(s_3, d)\\
+    \therefore s_1 \sim_d s_2 \sim_d s_3 &\Rightarrow s_1 \sim_d s_3\\
+    \nonumber
+\end{flalign*}
+\end{subequation}
+
+\begin{subequation}[arabic]
+Now, we must satisfy \lOC, \lSC, and \lLR:
+\begin{flalign}
+    \lOC \colon& \mbox{if } s_1 \sim_d s_2
+        \mbox{ then } \lobs_d(s_1) = \lobs_d(s_2)\label{eq:oceq}\\
+    \lSC \colon& \mbox{if } s_1 \sim_d s_2
+        \mbox{ and } a \in \set{A}
+        \mbox{ then } s_1 \cdot a \sim_d s_2 \cdot a \label{eq:sceq}\\
+    \lLR \colon& \mbox{if } \ldom(a) \not\rightarrowtail d
+        \mbox{ then } s \sim_d s \cdot a \label{eq:lreq}\\
+    \nonumber
+\end{flalign}
+
+The following table illustrates the agent ($d$), the initial machine state ($s_0$), the action taken by the agent ($a$), the resultant state ($s_1$), followed by $f$ for both agents ($L$ and $H$) and $\ldom(a)$:
+
+\begin{tabular}{ cllccc }
+    \hline
+    $d$ & $s_0 \cdot a$ & $s_1$ & $f_H$ & $f_L$ & $\ldom_L(a)$\\
+    \hline
+    $H$ & $(b, l, w).\lLock$   & $(b, 1, w)$ & $(b, 1)$ & $(w)$ & $H$\\
+    $H$ & $(b, l, w).\lUnlock$ & $(b, 0, w)$ & $(b, 0)$ & $(w)$ & $H$\\
+    $H$ & $(b, 1, w).\lWriteZ$ & $(0, l, w)$ & $(0, 1)$ & $(w)$ & $H$\\
+    $H$ & $(b, 0, w).\lWriteZ$ & $(b, l, w)$ & $(b, l)$ & $(w)$ & $H$\\
+    $H$ & $(b, 1, w).\lWriteO$ & $(0, l, w)$ & $(0, 1)$ & $(w)$ & $H$\\
+    $H$ & $(b, 0, w).\lWriteO$ & $(b, l, w)$ & $(b, l)$ & $(w)$ & $H$\\
+    $L$ & $(b, 0, w).\lWriteZ$ & $(0, l, 0)$ & $(0, l)$ & $(0)$ & $L$\\
+    $L$ & $(b, 1, w).\lWriteZ$ & $(b, l, 0)$ & $(b, l)$ & $(0)$ & $L$\\
+    $L$ & $(b, 0, w).\lWriteO$ & $(1, l, 1)$ & $(1, l)$ & $(1)$ & $L$\\
+    $L$ & $(b, 1, w).\lWriteO$ & $(b, l, 1)$ & $(b, l)$ & $(1)$ & $L$\\
+    \hline
+\end{tabular}
+\end{subequation}
+
+Now suppose that $s_1 \sim_L s_2$, then $\lobs_L(s_1) = (w) = \lobs_L(s_2)$, which satisfies \eqref{eq:oceq}.  Also note that if $s_1 \sim_L s_2$, that $\forall a \in \set{A}$ and $\forall d \in \set{D}$, $f_d(s_1 \cdot a) = f_d(s_2 \cdot a)$ and hence \eqref{eq:sceq}.  Finally, notice that for all cases where $\ldom(a) \not\rightarrowtail d$, that $f_d(s) = f_d(s \cdot a)$ and hence \eqref{eq:lreq}.
+    \qed
+\end{pf*}
+
+\section{\question{2}{5}}
+\begin{lemma}
+For the \emph{doubling construction} as defined in \cite{vdML5b10}, show that:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \If &s_0' \cdot \alpha = (s, t) \in \Fancy{M}^2
+        \Where s, t \in \Fancy{M}\label{eq:q2g1}\\
+    \Then &s_0 \cdot \alpha = s \label{eq:q2g2}\\
+    \mbox{and } &s_0 \cdot \lpurge_{Low}(\alpha) = t\label{eq:q2g3}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+\end{lemma}
+
+To begin with, some notation:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \Fancy{M} &\colon \mbox{a deterministic state machine}\\
+    \Fancy{M}^2 &\colon \mbox{a doubling construct of $\Fancy{M}$}\\
+    \set{S} &\colon \mbox{a set of states of the state machine}\\
+    s \in \set{S} &\colon \mbox{a particular state}\\
+    s_0 \in \set{S} &\colon \mbox{the initial state}\\
+    \set{A} &\colon \mbox{a set of actions}\\
+    a \in \set{A} &\colon \mbox{a particular action}\\
+    \set{D} &\colon \mbox{a set - security domain}\\
+    d \in \set{D} &\colon
+        \mbox{a particular security domain}\footnotemark[2]\\
+    \set{A}^* &\colon \mbox{the infinite set of action sequences}\\
+    \alpha \in \set{A}^* &\colon \mbox{an action sequence (ordered)}\\
+    \epsilon \in \set{A}^* &\colon \mbox{the empty action sequence}\\
+    \rightarrowtail &\colon \label{nonintereq1}
+        \mbox{a noninterference policy}\footnotemark[3]\\
+    d_1 \rightarrowtail d_2 \label{nonintereq2} &\colon
+        \mbox{permitted information flow}\footnotemark[4]\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+Equipped with the abovementioned building units, we illustrate how they relate to one another in following rules and constructs. \footnote{We reveal the details of $\Fancy{M}^2$ in due course}
+\footnotetext[2]{We may also refer to the security domains represented by $d$, more succinctly as ``agents''.}
+\footnotetext[3]{represented as a binary relation}
+\footnotetext[4]{information flow permitted from domain $d_1$ to domain $d_2$}
+
+\begin{subequation}[arabic]
+\begin{flalign}
+    \Fancy{M} &= \langle \set{S}, s_0, \set{A}, \lstep, \lobs, \ldom \rangle \label{eq:dfsm}\\
+    \ldom \colon \set{A} &\to \set{D}\label{domeq}\\
+    \lpurge \colon \set{A}^* \times \set{D} &\to \set{A}^*\label{purgeeq}\\
+    \lstep \colon \set{S} \times \set{A} &\to \set{S}\label{stepeq}\\
+    s \cdot a &= s'\label{onestepeq}\\
+    s \cdot \alpha &= s''\label{seqofstepeq}\\
+    s \cdot \epsilon &= s\label{nullstepeq}\\
+    \lobs \colon \set{S} \times \set{D} &\to \set{O}\label{obseq}\\
+    \rightarrowtail &\subseteq \set{D} \times \set{D}\label{nonintereq3}\\
+    \nonumber
+\end{flalign}
+
+Eq. \eqref{domeq} associates each action to an element of the security domain.
+\eqref{purgeeq} maps domain only to action permitted to interfere with it.
+\eqref{stepeq} depicts a deterministic transition function.
+\eqref{onestepeq} depicts a single deterministic transition from $s$ to $s'$ via action $a$.
+\eqref{seqofstepeq} depicts state $s''$ reached by performing the sequence of actions $\alpha$ from $s$.
+\eqref{nullstepeq} depicts a no-action, no change in state.
+\eqref{obseq} maps states to an observation for each security domain.
+\eqref{nonintereq3} - see \eqref{nonintereq1} and  \eqref{nonintereq2}.
+
+\end{subequation}
+
+\begin{subequation}[arabic]
+Standard model checking verifies properties of a single run of the system, so cannot directly be applied to verify noninterference security, which talks about two runs ($\alpha$ and $\lpurge_d(\alpha)$).  However, we can modify the system so that model checking becomes applicable.
+
+\label{doubling}We will now demonstrate this for the simple case of the \emph{High-Low policy}, which is defined as follows:
+\begin{flalign}
+    \set{D} &= \{ High, Low \}\\
+    Low \rightarrowtail High &\colon \mbox{Low to High information flow permitted}\\
+    High \not\rightarrowtail Low &\colon \mbox{High to Low information flow NOT permitted}\\
+    \rightarrowtail &= \{ (Low, Low), (High, Low), (High, High)) \}\\
+    \nonumber
+\end{flalign}
+
+\label{def1}The system $\Fancy{M}$ \eqref{eq:dfsm} is secure with respect to the transitive policy $\rightarrowtail$ if $\forall \alpha \in \set{A}^*$ and domains $d \in \set{D}$, we maintain the following:
+\begin{flalign}
+    \lobs_u(s_0 \cdot \alpha) &= \lobs_u(s_0 \cdot \lpurge_u(\alpha))\\
+    \nonumber
+\end{flalign}
+
+Intuitively, the modified system records and compares the states resulting from the two runs ($\alpha$ and $\lpurge_d(\alpha)$).  Given a system $\Fancy{M}$ \eqref{eq:dfsm}, we define the \emph{doubling construction} $\Fancy{M}^2$ as follows:
+\begin{flalign}
+    \Fancy{M}^2 &= \langle \set{S}', s_0', \set{A}, \lstep', \lobs', \ldom \rangle \label{em2eq}\\
+    \nonumber
+\end{flalign}
+
+In this new formulation, the variations from \eqref{eq:dfsm} are defined as follows:
+\begin{flalign}
+    \set{S}' &= \set{S} \times \set{S}\\
+    s_0' &= (s_0, s_0)\label{szerodasheq}\\
+    \lstep'((s, t), a) &= \left\{
+        \begin{array}{l l}
+          (\lstep(s, a), \lstep(t, a)) & \text{if $\ldom(a) =$ Low}\\
+          (\lstep(s, a), t) & \text{otherwise}\\
+        \end{array}
+        \right.\label{stepdasheq}\\
+    \lobs_d'(s, t) &= (\lobs_d(s), \lobs_d(t)) \forall (s, t) \in \set{S}'\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+\vskip0pt
+\begin{pf*}{Proof (of \eqref{eq:q2g2}, Lemma 2)}
+    First, we remind the reader of the following:
+    \begin{subequation}[arabic]
+    \begin{flalign}
+        (s, t) \cdot a.\alpha &= \lstep((s, t), a) \cdot \alpha\\
+        \nonumber
+    \end{flalign}
+    \end{subequation}
+
+    So expanding $\alpha$ into its sequencec components $(a_1, a_2, \ldots a_n)$, and from \eqref{szerodasheq} and \eqref{stepdasheq}, we can derive the following:
+    \begin{subequation}[arabic]
+    \begin{flalign}
+        \lstep'((s, t), \alpha) &= \left\{
+            \begin{array}{l l}
+                (\lstep(s, \alpha), \lstep(t, \alpha)) & \text{if $\ldom(\alpha) =$ Low}\\
+                (\lstep(s, \alpha), t) & \text{otherwise}\\
+            \end{array}
+            \right.\\
+        \therefore \lstep'((s_0, s_0), \alpha) &= \left\{
+            \begin{array}{l l}
+                (\lstep(s_0, \alpha), \lstep(s_0, \alpha)) & \text{if $\ldom(\alpha) =$ Low}\\
+                (\lstep(s_0, \alpha), s_0) & \text{otherwise}\\
+            \end{array}
+            \right.\label{stepdasheq2}\\
+        \nonumber
+    \end{flalign}
+    \end{subequation}
+
+    Now given \eqref{eq:q2g1}, we can use \eqref{stepdasheq2} and derive the following:
+    \begin{subequation}[arabic]
+    \begin{flalign}
+        s_0' \cdot \alpha &= (s, t)\\
+            &= (
+                \lstep(s_0, \alpha), \lstep(s_0, \alpha)
+            )\\
+        \therefore s &= \lstep(s_0, \alpha)\\
+            &= s_0 \cdot \alpha \text{ and hence \eqref{eq:q2g2}}\\
+        \nonumber
+    \end{flalign}
+    \end{subequation}
+    \qed
+\end{pf*}
+
+\vskip0pt
+\begin{pf*}{Proof (of \eqref{eq:q2g3}, Lemma 2)}
+    Again using \eqref{eq:q2g1}, and \eqref{stepdasheq2}, we execute a second run but this time using the purged sequence:
+    \begin{subequation}[arabic]
+    \begin{flalign}
+        s_0' \cdot \alpha &= (s, t)\\
+            &= (
+                \lstep(s_0, \lpurge_{Low}(\alpha)), \lstep(s_0, \lpurge_{Low}(\alpha))
+            )\\
+        \therefore t &= \lstep(s_0, \lpurge_{Low}(\alpha))\\
+            &= s_0 \cdot \lpurge_{Low}(\alpha) \text{ and hence \eqref{eq:q2g3}}\\
+        \nonumber
+    \end{flalign}
+    \end{subequation}
+    \qed
+\end{pf*}
+
+
+
+\section{\question{3}{2}}
+\begin{lemma}
+Suppose:
+\begin{subequation}[arabic]
+    \begin{flalign}
+        L &\leq H \text{in the order on classes}\label{eq:q2g1eq}\\
+        \gamma(l) &= L\label{eq:q2g2eq}\\
+        \nonumber
+    \end{flalign}
+
+    Show that it is possible to derive:
+    \begin{flalign}
+        \gamma &\vdash l := 0 : L_{cmd}\label{eq:q2p1}\\
+        \gamma &\vdash l := 0 : !H_{cmd} \text{(Note the negation)}\label{eq:q2p2}\\
+        \nonumber
+    \end{flalign}
+\end{subequation}
+\end{lemma}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 3)}
+    From \eqref{eq:q2g2eq} and ``VAR'' we can derive $\lgv l \colon L_{var}$, and from ``INT'' and \eqref{eq:q2p1}$^{RHS}$ we derive $\lgv 0 \colon \in \{ L, H \}$.  Using ``ASSIGN'', we can hence derive \eqref{eq:q2p1}.  However we cannot derive $\lgv l := 0 : H_{cmd}$ since the ``ASSIGN'' rule requires that the $LHS$ of the assignment be of type $H_{var}$, but there is no way to coerce a $L_{var}$ to this - hence \eqref{eq:q2p2}.
+    \qed
+\end{pf*}
+
+\section{\question{4}{1}}
+\begin{lemma}
+    Given the following:
+    \begin{flalign}
+        \gamma(l) &= L\label{eq:q4g1}\\
+        \gamma(h) &= H\label{eq:q4g2}\\
+        \Psi &= \If h \Then l := 0 \Else l := 1\label{eq:q4g3}\\
+        \nonumber
+    \end{flalign}
+
+    Show that we cannot obtain:
+    \begin{flalign}
+        \lgv \Psi \colon H_{cmd}\label{eq:q4p1}\\
+        \nonumber
+    \end{flalign}
+\end{lemma}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 4)}
+    \begin{flalign}
+        \mbox{Let } &\lexpr_1 \mbox{ denote } h = 1\\
+        \mbox{Let } &\lcmd_1 \mbox{ denote } l := 1\\
+        \mbox{Let } &\lcmd_2 \mbox{ denote } l := 0\\
+        \nonumber
+    \end{flalign}
+
+    First we analyse $\lexpr_1$; $\lexpr_1^{LHS}$ gives $H$ from ``VAR'' and ``R-VAL'', and $\lexpr_1^{RHS}$ is a numeric constant and hence gives $\tau \in \{ L, H \}$ via ``INT''.  These can be combined to give only $\tau = H$ via ``ARITH''.
+
+    Next, we analyse $\lcmd_1$ and $\lcmd_2$ collectively as $\lcmd$ since they're identical in classification structure. $\lcmd^{RHS}$ is a numeric constant and hence gives $\tau \in \{ L, H \}$ via ``INT''.  $\lcmd^{LHS}$ is however $L_{var}$ from \eqref{eq:q4g1} and ``VAR'', so from ``ASSIGN'', we can derive only that $\lgv l := N \colon L_{cmd}$ and since $L_{cmd} \not \subseteq H_{cmd}$, it cannot be coerced as such.
+
+    Following on from this then, it is not possible to use ``IF'' to show that $\Psi$ \emph{well-typed}, and hence \eqref{eq:q4p1} cannot be obtained.
+    \qed
+\end{pf*}
+
+
+
+\section{\question{5}{7}}
+\begin{subequation}[arabic]
+    Suppose that following holds true:
+    \begin{flalign}
+        L &\leq H \text{(in the order on classes)}\label{eq:q5g1}\\
+        \gamma(l) &= L\label{eq:q5g2}\\
+        \gamma(h) &= H\label{eq:q5g3}\\
+        \nonumber
+    \end{flalign}
+\end{subequation}
+
+For each of the following programs $\Psi$, determine the set $\set{T}_\Psi$ of all types $\tau$ such that the following statement can be evaluated.
+\begin{subequation}[arabic]
+\begin{flalign}
+    \lgv \Psi \colon \ltaucmd\label{eq:q5g4}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+\begin{lemma}
+Provide a proof when $\tau \in \set{T}_\Psi$, or alternatively, an argument as to why $\tau \not\in \set{T}_\Psi$.
+\end{lemma}
+
+%\renewcommand{\labelenumi}{(\alph{enumi})}
+\begin{subequation}[arabic]
+From \eqref{eq:q5g2} and ``VAR'':
+\begin{flalign}
+    (5a) \mbox{\qmark{1}} - \Psi &= h := h + l\label{eq:q5pA}\\
+    (5b) \mbox{\qmark{1}} - \Psi &= l := h + l\label{eq:q5pB}\\
+    (5c) \mbox{\qmark{1}} - \Psi &= \If l \Then l := 1 \Else l := 2\label{eq:q5pC}\\
+    (5d) \mbox{\qmark{1}} - \Psi &= \If h \Then h := 1 \Else h := 2\label{eq:q5pD}\\
+    (5e) \mbox{\qmark{1}} - \Psi &= \While l \Do \{ h := h + l; l := l + 1 \}\label{eq:q5pE}\\
+    (5f) \mbox{\qmark{1}} - \Psi &= \While h \Do \{ h := h + l; l := l + 1 \}\label{eq:q5pF}\\
+    (5g) \mbox{\qmark{1}} - \Psi &= \lletvar t := 0 \lin \{ t := l; l := t; h := l \}\label{eq:q5pG}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+Before proceeding with the proofs, we will first derive some common truths which we will reference throught the seven subsections that follow.
+
+\begin{subequation}[arabic]
+First from \eqref{eq:q5g1} and ``BASE'' we have:
+\begin{flalign}
+    L \subseteq H\label{eq:q5d1}\\
+    \nonumber
+\end{flalign}
+
+We also make an explicit note of the following fact:
+\begin{flalign}
+    L_{var} \not\subseteq H_{var}\label{eq:q5d2}\\
+    \nonumber
+\end{flalign}
+
+From \eqref{eq:q5d1}, \eqref{eq:q5g2}, \eqref{eq:q5g3}, and ``VAR'':
+\begin{flalign}
+    \lgv l \colon L_{var}\label{eq:q5d3}\\
+    \lgv h \colon H_{var}\label{eq:q5d4}\\
+    \nonumber
+\end{flalign}
+
+Furthermore, from these equations and ``R-VAL'':
+\begin{flalign}
+    \lgv l \colon L\label{eq:q5d5}\\
+    \lgv h \colon H\label{eq:q5d6}\\
+    \nonumber
+\end{flalign}
+
+And finally, from \eqref{eq:q5d1}, \eqref{eq:q5d5}, and ``SUBTYPE'':
+\begin{flalign}
+    \lgv l \colon H\label{eq:q5d7}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 5a)}
+\begin{subequation}[arabic]
+We take $\Psi^{RHS}$ from \eqref{eq:q5pA} and using \eqref{eq:q5d6}, \eqref{eq:q5d7}, and ``ARITH'' we get $\lgv \Psi^{RHS} \colon H$; that is:
+\begin{flalign}
+    \lgv h + l \colon H\label{eq:q5Ad1}\\
+    \nonumber
+\end{flalign}
+
+Next we take $\Psi^{LHS}$ from \eqref{eq:q5pA}, \eqref{eq:q5Ad1}, \eqref{eq:q5d5}, and ``ASSIGN'' to get $\lgv \Psi : H_{cmd}$. for \eqref{eq:q5g4}.  Note that we cannot obtain $\lgv \Psi : L_{cmd}$ as the ``ASSIGN'' rule requires the $LHS$ of the assignment to be of class $L_{var}$ - which is not possible as explicitly denoted in \eqref{eq:q5d2}.  Formally then we have the following:
+\begin{flalign}
+    \set{T}_\Psi &= \{ H_{cmd} \}\label{eq:q5Ad2}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+    \qed
+\end{pf*}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 5b)}
+We take $\Psi^{RHS}$ \eqref{eq:q5pB}, and \eqref{eq:q5Ad1} - but cannot obtain $\lgv h + l \colon L$ as $H \not \subseteq L$. Using $\Psi^{LHS}$ from \eqref{eq:q5pB} we can only obtain \eqref{eq:q5d4}, and so we cannot apply ``ASSIGN'' to derive anything else; that is - \eqref{eq:q5pB} is not \emph{well-typed} - and hence cannot be typed.  Formally then we have the following:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \set{T}_\Psi &= \emptyset\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+    \qed
+\end{pf*}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 5c)}
+We take $\Psi$ \eqref{eq:q5pC} we consider the ``IF'' rule, which is composed of three components; namely the expression $\lexpr$, the ``then'' command $\lcmd_1$, and the ``else'' command $\lcmd_2$.  Since both $\lcmd_1$ and $\lcmd_2$ are of the same class order, we will collectively refer to both as $\lcmd$.
+
+For $\lexpr = l$ we trivially get $\lgv l \colon \tau$ where $\tau \in \{ L, H \}$ from \eqref{eq:q5d5} and \eqref{eq:q5d7}.
+
+For the collective command $\lcmd$, we use ``ASSIGN'' and obtain $\lgv \lcmd \colon L_{cmd}$, and from ``CMD$^-$'' also obtain $\lgv \lcmd \colon H_{cmd}$.
+
+Combining these facts with ``IF'' we hence get:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \set{T}_\Psi &= \{ L_{cmd}, H_{cmd} \}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+    \qed
+\end{pf*}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 5d)}
+We take $\Psi$ \eqref{eq:q5pD} and by the same means of evaluation as defined in the proof for Lemma 5c, and by virtue of the fact $\eqref{eq:q5d2}$, we get:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \set{T}_\Psi &= \{ H_{cmd} \}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+The cruicial point to note in this is that the ``ASSIGN'' rule requires a $LHS$ of type $\tau_{var}$, and type $\tau_{var}$ is non-ceorceable;  So as long as the $RHS$ of an assignment permits, the $LHS$ will allow only a single class type judgement to be made.
+    \qed
+\end{pf*}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 5e)}
+$\Psi$ \eqref{eq:q5pE}; we consider the ``WHILE'' rule here which is composed to the two components - the expression $\lexpr$ and phrase $\lphr$.
+For $\lexpr = l$ we trivially get $\lgv l \colon \tau$ where $\tau \in \{ L, H \}$ - as demonstrated earlier in proof of \eqref{eq:q5pC}.
+
+For the phrase however, we need to expand $\lphr$ into its components first; which for this problem \eqref{eq:q5pE} can be split into the two sub-commands $\lcmd_1 = h := h + l$ and $\lcmd_2 = l := l + 1$. We know from \eqref{eq:q5Ad1} that $\lgv h + l \colon H$ (and not $L$), and from the proof of \eqref{eq:q5pC} and ``ARITH'' we can derive that $\lgv l + 1 \colon \in \{ L, H \}$.  Using the ``ASSIGN'' rule on $\lcmd_1$ and $\lcmd_2$ then we get $\lgv \lcmd_1 \colon L_{cmd}$, and $\lgv \lcmd_2 \colon \{ L_{cmd}, H_{cmd} \}$ respectively.  From ``COMPOSE'' we know that $H_{cmd} \subseteq L_{cmd}$, and so we can safely class this problem as follows:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \set{T}_\Psi &= \{ L_{cmd}, H_{cmd} \}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+    \qed
+\end{pf*}
+
+\vskip0pt
+\begin{pf*}{Proof (of Lemma 5f)}
+$\Psi$ \eqref{eq:q5pF}; we consider the ``WHILE'' rule here which is composed to the two components - the expression $\lexpr$ and phrase $\lphr$, as in the previous proof.
+For $\lexpr = l$ we trivially get $\lgv l \colon \tau$ where $\tau \in \{ L, H \}$ - as demonstrated earlier in proof of \eqref{eq:q5pC}.
+This time however, we cannot coerce $\lcmd_1$ to $L$, because $L_{cmd} \not \subseteq H_{cmd}$;  That is, this problem is not \emph{well-typed}.  Formally then:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \set{T}_\Psi &= \emptyset\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+    \qed
+\end{pf*}
+
+%\vskip0pt
+%\begin{pf*}{Proof (of Lemma 5g)}
+%\begin{subequation}[arabic]
+%\begin{flalign}
+    %\nonumber
+%\end{flalign}
+%\end{subequation}
+%\end{pf*}
+
+References: \cite{vdML5b10}, \cite{SY08}, and \cite{MD003}.
+
+%-------------------------------------------------------------------------------
+\input{footer}

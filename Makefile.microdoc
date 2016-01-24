@@ -1,0 +1,40 @@
+PDF     := $(shell basename $(PWD)).pdf
+CITE    := $(shell grep -q '\\cite{' microdoc.tex && echo 1 || echo 0)
+
+BUILD: $(PDF)
+
+%.pdf: microdoc.tex ../.md/header.tex ../.md/footer.tex
+	-ln -s ../.md/header.tex
+	-ln -s ../.md/footer.tex
+	xelatex microdoc #> /dev/null && printf "."
+	$(MAKE) DOTS
+ifeq ($(CITE),1)
+	bibtex microdoc #> /dev/null && printf "."
+	xelatex microdoc #> /dev/null && printf "."
+endif
+	xelatex microdoc #> /dev/null && printf "."
+	mv microdoc.pdf $(PDF)
+	$(MAKE) DOTS_clean
+
+DOTS:
+	$(foreach dot,$(wildcard *.dot),dot -Tps2 $(dot) -o $(dot:.dot=.ps);epstopdf $(dot:.dot=.ps) -o=$(dot:.dot=.pdf);)
+
+DOTS_clean:
+	$(foreach dot,$(wildcard *.dot),rm -f $(dot:.dot=.*))
+
+open: $(PDF)
+	open $(PDF)
+
+pub: $(PDF)
+	@#rsync -a $< nima@autonomy.net.au:/var/www/nima/sites/src.autonomy.net.au/pub/microdocs/$<
+	@#ssh nima@autonomy.net.au 'cd /var/www/nima/sites/src.autonomy.net.au/pub/microdocs/ && ./rss.py'
+	@#echo "http://src.autonomy.net.au/microdocs/$<"
+
+clean:
+	-test ! -h header.tex || rm -f header.tex
+	-test ! -h footer.tex || rm -f footer.tex
+	-rm -f *.{log,aux,gz,dvi,toc,brf,out,bbl,blg,ent,qsl,sol}
+	-rm -f microdoc.pdf
+
+
+.PHONY: PS2PDF DOT2PS BUILD clean

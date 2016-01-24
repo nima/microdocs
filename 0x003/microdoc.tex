@@ -1,0 +1,153 @@
+%!TEX TS-program = LaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x003}
+\newcommand{\theVersion}{0.1}
+\newcommand{\theTitle}{Static Program Analysis}
+\newcommand{\theKeywords}{security}
+\newcommand{\theAbstract}{
+    Static analysis aims to show that a program is safe in some well-defined way, for example - that it is secure with respect to some well-understood definition of the word `security'.  It does so purely on an analysis of the code, and independent of any inputs.
+}
+
+\input{header}
+
+\newcommand\taucmd{\tau_\texttt{cmd}}
+\newcommand\tauvar{\tau_\texttt{var}}
+\newcommand\letvar{\texttt{letvar}}
+\newcommand\cmd{\varsigma}
+\newcommand\expr{\varepsilon}
+\newcommand\phr{\wp}
+%-------------------------------------------------------------------------------
+
+\section{Notation}
+
+\begin{flalign}
+    \leq & \colon \mbox{the \emph{partial order relation}}\\
+    \subseteq &\colon \mbox{the \emph{substype relation} - partial order relation extension}\\
+    (SC, \leq) &\colon \mbox{the lattice that defines an information flow policy}\label{SCeq1}\\
+    SC &\colon \mbox{a finite set of \emph{security classes} partially ordered}\label{SCeq2}\\
+    \gamma &\colon \mbox{identifier typing}\\
+    \tau &\colon \mbox{data types } \in SC\\
+    \taucmd &\colon \mbox{command types}\\
+    \tauvar &\colon \mbox{variable types storing information whose s.c. is $\leq\tau$ }\\
+    \rho &\colon \mbox{phrase types} - \mbox{ includ data types }
+        \tau \in \{ \expr, \tauvar, \taucmd \}\\
+    \expr &\colon \mbox{an expression}
+        \in \{ x, n, \expr \sim \expr'\} \mbox{ where } \sim \in \{ +, -, <, =\}\\
+    \cmd &\colon \mbox{a command}
+        \in \{\nonumber\\
+            &\HSpace \expr := \expr', \cmd; \cmd',\nonumber\\
+            &\HSpace \mbox{\texttt{if}-construct},\nonumber\\
+            &\HSpace \mbox{\texttt{while}-construct},\nonumber\\
+            &\HSpace \mbox{\texttt{letvar}-construct}\nonumber\\
+        \}\\
+    \phr &\colon \mbox{a phrase } \in \{ \expr, \cmd \}\\
+    x &\colon \mbox{a variable}\\
+    n &\colon \mbox{an integer constant}\\
+    \gamma \vdash \phr \colon \tau &\colon \mbox{a judgement on $\phr$ w.r.t. $\gamma$}\\
+        &\mbox{asserting the type of $\phr$ to be $\tau$}\nonumber\\
+        &\mbox{(i.e., $\gamma\colon Variables \rightarrow SC$)}\nonumber\\
+    \gamma \vdash \phr \colon \rho &\colon \mbox{a judgement on $\phr$ w.r.t. $\gamma$}\\
+        &\mbox{asserting the phrase $\phr$ is of type $\rho$}\nonumber\\
+        &\mbox{(i.e., $\gamma\colon Variables \rightarrow SC$)}\nonumber\\
+    \nonumber
+\end{flalign}
+
+\section{Definitions}
+From the \eqref{SCeq1} and \eqref{SCeq2} above then, it is obvious that we can concretely define $SC$ as a finit set of security classes, partially ordered by the partial binary relation ``$\leq$''.
+
+\DEFN{Certificate Condition}{
+    Every program construct has a \emph{certificate condition} which is a purely syntactic condition relating security classes.  Some of these control \emph{explicit flows}, while others control \emph{implicit flows} \cite{VIS96}.  The following example demonstrates both types:\\
+    \\
+    \begin{tabular}{ | l | l | }
+        \hline
+        Program & Control Type \\
+        \hline
+        \texttt{y := x} & Explicit\\
+        \hline
+        \texttt{\textbf{if} x \textbf{then} y := 1 \textbf{else} y = 0} & Implicit\\
+        \hline
+    \end{tabular}
+}
+
+\section{Rules of Inference}
+\subsection{Typing and Subtyping Rules}
+
+The following set of rules is based on \cite{VIS96}:
+\begin{flalign}
+    BASE &\colon \frac{\tau \leq \tau'}{\tau \subseteq \tau'}\label{BASE}\\
+    REFLEX &\colon \rho \subseteq \rho'\\
+    TRANS &\colon \frac{\rho \subseteq \rho' \wedge \rho' \subseteq \rho''}{\rho \subseteq \rho''}\\
+    CMD^- &\colon \frac{\tau \subseteq \tau'}{\taucmd' \subseteq \taucmd}\label{CMD}\\
+    SUBTYPE &\colon \frac{
+        \gamma \vdash \phr \colon \rho \wedge \rho \subseteq \rho'
+    }{
+        \gamma \vdash \phr \colon \rho'
+    }\\
+    INT &\colon \gamma \vdash N \colon \tau \quad\mbox{where $N$ is an integer constant}\\
+    VAR &\colon \gamma \vdash x \colon \tauvar \quad\mbox{if } \gamma(x) = \tau\\
+    ARITH &\colon \frac{
+        \gamma \vdash \expr \colon \tau \wedge \gamma \vdash \expr' \colon \tau
+    }{
+        \gamma \vdash \expr \sim \expr' \colon \tau
+    }\\
+        &\mbox{where $\sim$ is any binary arithmatic operator}\nonumber\\
+    R-VAL &\colon \frac{
+        \gamma \vdash \expr \colon \tauvar
+    }{
+        \gamma \vdash \expr \colon \tau
+    }\\
+    ASSIGN &\colon \frac{
+        \gamma \vdash x \colon \tauvar \wedge \gamma \vdash \expr \colon \tau
+    }{
+        \gamma \vdash x := \expr \colon \taucmd
+    }\\
+    COMPOSE &\colon \frac{
+        \gamma \vdash \cmd \colon \taucmd \wedge \gamma \vdash \cmd' \colon \taucmd
+    }{
+        \gamma \vdash \cmd;\cmd' := \colon \taucmd
+    }\\
+    IF &\colon \frac{
+        \gamma \vdash \expr \colon \tau
+            \wedge \gamma \vdash \phr \colon \taucmd
+            \wedge \gamma \vdash \phr' \colon \taucmd
+    }{
+        \gamma \vdash \texttt{if } \expr \texttt{ then } \phr \texttt{ else } \phr' \colon \taucmd
+    }\\
+    WHILE &\colon \frac{
+        \gamma \vdash \expr \colon \tau \wedge \gamma \vdash \phr \colon \taucmd
+    }{
+        \gamma \vdash \texttt{while } \expr \texttt{ do } \phr \colon \taucmd
+    }\\
+    LETVAR &\colon \frac{
+        \gamma \vdash \expr \colon \tau \wedge \gamma[x\colon\tau] \vdash \cmd \colon \taucmd'
+    }{
+        \gamma \vdash \texttt{letvar } x := \expr \texttt{ in } \cmd \colon \taucmd'
+    }\\
+    \gamma[x\colon\tau] &\colon \mbox{ where } \left\{
+        \begin{array}{l l}
+            \gamma'(y) &= \gamma(y) \mbox{ if } y \neq x\\
+            \gamma'(x) &= \tau\\
+        \end{array}\right.\\
+    \nonumber
+\end{flalign}
+
+\NOTE{There is NO subtyping rule for $\tauvar$, that is - this expression always tells the \emph{actual} type of the variable}
+
+\DSMB{Coercion}{
+    Drop of command or class type in special circumstances as detailed below.
+}
+
+Using \eqref{BASE} and \eqref{CMD}, two types of coercions\cite{VIS96} that are possible are as follows:
+\begin{flalign}
+    \mbox{if } \tau \subseteq \tau', \mbox{ then } \left\{
+        \begin{array}{l l}
+            \tau \rightarrow \tau' &\quad \mbox{Data Type Coercion}\\
+            \taucmd' \rightarrow \taucmd &\quad \mbox{Command Type Coercion}\\
+        \end{array}\right.\label{coerceeq}\\
+    \nonumber
+\end{flalign}
+
+%-------------------------------------------------------------------------------
+\input{footer}

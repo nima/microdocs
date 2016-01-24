@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%. The Preamble...
+\newcommand{\theFirstName}{Nima}
+\newcommand{\theLastName}{Talebi}
+\newcommand{\theEmail}{nima.talebi@det.nsw.edu.au}
+\newcommand{\theInstitute}{Enterprise Servers - Linux}
+\newcommand\theAuthor{\theFirstName \theLastName}
+\def\copyrightline{\copyright\- New South Wales Department of Education and Training 2010}
+%-------------------------------------------------------------------------------
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[
+    pdftitle={\theTitle},
+    pdfsubject={\theSubtitle},
+    pdfauthor={\theAuthor},
+    pdfcreator={\theAuthor},
+    pdfkeywords={\theKeywords},
+    backref,
+    hyperfigures=true,
+    final,
+    bookmarks=false,
+    xetex,
+    dvipdfm,
+    breaklinks,
+    bookmarksopen=true,
+    bookmarksnumbered=true,
+    colorlinks=true,
+    linkcolor=Cyan,
+    anchorcolor=Red,
+    citecolor=ForestGreen,
+    filecolor=Aquamarine,
+    menucolor=Orange,
+    runcolor=Red,
+    urlcolor=LimeGreen
+]{hyperref}
+\InputIfFileExists{preamble.tex}{}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%. The Document...
+\draftcopyName{DRAFT}{50}
+\begin{document}
+\begin{article}
+\begin{opening}
+    \title{\theTitle}
+    \runningtitle{\theTitle}
+    \subtitle{New South Wales Department of Education and Training}
+
+    \runningauthor{\theSubtitle}
+    \author{\theFirstName \surname{\theLastName}\email{\theEmail}}
+    \institute{\theInstitute}
+    \InputIfFileExists{authors.tex}{}{}
+
+    \IfFileExists{motto.tex}{
+        \begin{motto}[prose]
+            \input{motto.tex}
+        \end{motto}
+    }{}
+    \InputIfFileExists{abbrev.tex}{}{}
+    \InputIfFileExists{nomen.tex}{}{}
+    \InputIfFileExists{dedication.tex}{}{}
+
+    \keywords{\theKeywords}
+    \InputIfFileExists{classify.tex}{}{}
+    \begin{abstract}
+        \theAbstract
+    \end{abstract}
+    \classification{Version}{\theVersion}
+\end{opening}
+
+\centerline{\includegraphics[width=98pt]{logo}}
+%-------------------------------------------------------------------------------
+%. Finish off...
+\tableofcontents

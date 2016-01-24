@@ -1,0 +1,562 @@
+%!TEX TS-program = XeLaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x005}
+\newcommand{\theVersion}{0.8}
+\newcommand{\theTitle}{Linux Applications and Services Policy}
+\newcommand{\theSubtitle}{Linux Standards}
+\newcommand{\theKeywords}{linux, standards, DET}
+\newcommand{\theAbstract}{Applications administrators and developers (AAD) require support with infrastructure that hosts their applications; this document addresses the support system.  From business requirements, to BAU maintenance, and support of various components of application servers and services. Two primary subjects in question are the AADs, and the system administrators (SA).  Secondary subjects include middleware (MWA), database administrators (DBA), and of course - the customers.}
+
+\input{header}
+\raggedbottom
+%-------------------------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Notation and Language}
+This is a quick guide to the language/notation used in this document:
+
+\begin{tabular}{cl}
+    \hline
+    Symbol & Description\\
+    \hline
+    $\set{A}$ & A ``set'', containing zero or more items/elements\\
+    $x \in \set{X}$ & An ``item/element'', $x$ is a member of set $\set{X}$\\
+    \lHIS & High-Impact Services\\
+    \lLIS & Low-Impact Services\\
+    \hline
+\end{tabular}
+
+The reader is strongly advised to make note of keywords and abbreviations listed on the cover page if they haven't already.
+
+\subsection{Application Tiers ({\tt tier})}
+\subsubsection{Crash and Burn (\texttt{cnb} $\in$ \lLIS)}
+AADs have almost unbound access to these servers to carry out all experimental experiments and/or ideas, as they see fit.  Under special circumstances, AAD can also be provided with root access, however the server will at this point be disconnected from the management network, and server/services health will no longer be SA responsibility.
+
+All OS maintenance work on these servers will be carried out during business hours.
+
+\subsubsection{Development (\texttt{dvl} $\in$ \lLIS)}
+AADs still maintain a direct means of deploying files (scripts, configuration files, etc) to development servers.
+
+OS maintenance on these servers will be carried out prior 08:00, or after 17:00.
+
+\subsubsection{Testing (\texttt{tst} $\in$ \lHIS)}
+This is the first of the \lHIS server set; direct deployment of files is no longer allowed, and must go through the controlled process described later in this document.  The test environment is designed to mimic production in every way - but purely for the porpose of \emph{functionality testing}, and not \emph{stress testing}.  This means that the processes by which servers in this tier are put into motion mimic that of production, but the servers will generally have less processing power, less memory, and less storage.
+
+OS maintenance on these servers will be carried out prior 08:00, or after 17:00.
+
+\subsubsection{Training (\texttt{trn} $\in$ \lHIS)}
+This system is a special case of a production; that is when there is training - it is as important as production, but outside of those times, it is of lower priority.
+
+OS maintenance on these servers can be carried out during business hours, as long as there is no training scheduled.
+
+\subsubsection{Acceptance (\texttt{acc} $\in$ \lHIS)}
+This tier is a true replica of production, both in processes and in resources.  Its main purpose is not \emph{functionality testing}, but \emph{stress testing}.
+
+\subsubsection{Production (\texttt{prd} $\in$ \lHIS)}
+This tier is the public/customer face.
+
+
+\section{Requirements}
+This section highlights the requirements that SA have of AAD, with respect to the particular application services requested by the AAD.  Application to be hosted on a Linux servers have certain attributes that are required by SA:
+
+\begin{tabular}{llc}
+    \hline
+    Attribute & Description & Optional\\
+    \hline
+    \texttt{app} & \textit{application vendor and name} & Required\\
+    $\texttt{user}_{app}$ & \textit{application user}\footnotemark & Optional\\
+    $\set{R}$ & \textit{resource requirements} & Required\\
+    \texttt{tier} & \textit{server tier} $\in \{
+        \texttt{prd},
+        \texttt{acc},
+        \texttt{tst},
+        \texttt{trn},
+        \texttt{dvl},
+        \texttt{cnb}
+    \}$ & Required\\
+    \hline
+\end{tabular}
+\footnotetext{This is the user under whose {\tt pid} the application process will run - a non-human user.  Under no circumstances will this user ever be \texttt{root} or equivalent}
+
+\subsection{Resource Requirements ($\set{R}$)}
+It is the responsibility of AAD to provide the vendor requirements such that the vendor can provide the vendor information about projected usage-loads and usage-patterns.
+
+$\set{R}$ should be determined by PoC, during which time the servers provided will be provided with \emph{minimal} resources.  Vendor recommendations are taken into consideration, however they are generally excessive.
+
+\subsubsection{Storage}
+With storage, special care needs to be taken.
+
+\begin{tabular}{ll}
+    \hline
+    Attribute & Description\\
+    \hline
+    \texttt{name} &- used in correspondence for storage identification\\
+    $\set{S}$ &- set of servers which require access to this storage\\
+    $\texttt{cap}_0$ &- initial capacity requirements\\
+    $\texttt{cap}_\partial$ &- expected capacity growth rate\\
+    $\texttt{cap}_C$ &- capacity class $\in \{
+        \texttt{DATA},
+        \texttt{TMPDATA},
+        \texttt{SCRIPTS},
+        \texttt{ARCHIVE}
+    \}$\\
+    \hline
+\end{tabular}
+
+\paragraph{Data Class {\tt TMPDATA}}
+Temporary data defines a class of data that can at any point in time be purged without significant damage or loss to the business.  That implies that the data is either a copy, or it can be regenerated without significant side effects.  This is the only class of data is permitted to be stored on non-redudant disks - with the benefit of increased storage space and also increased read and write access, both as a direct result of removed redundancy.
+
+The question to ask when deciding to label your data {\tt TMPDATA} is:
+\begin{enumerate}
+    \item {\it Is the additional space/time benefits of any value?}
+    \item {\it Is the elevated risk of downtime worth the space/time benefits?}
+    \item {\it Is the data - {\bf at all times} recoverable if lost due to disk failure?}
+\end{enumerate}
+
+\paragraph{Data Class {\tt ARCHIVE}}
+Data that must be stored, but not required for day-to-day access.
+
+\paragraph{Data Class {\tt DATA}}
+All other data.
+
+\paragraph{Data Class {\tt SCRIPTS}}
+Scripts written by staff, while not technically ``data'', still take time and effort to write, and so deserve some additional care.  Furthermore, they are an easy gateway via which a careless mistake or malicious attack can take place.  For these reasons, all scripts written by AAD are to go through a separate process described in the ``Application Management'' section.
+
+\STEP{
+    For each application you wish to deply, design your filesystem layout as you like, but ensure that they do not conflict with the \emph{FHS}.  For every application request, complete the required details:
+    \[(
+        \texttt{app},
+        \texttt{user}_{app},
+        \set{R},
+        \texttt{tier}
+    )\]
+
+
+    With respect to $\set{R}$, for each unit of storage (excluding of course the operating system) provide the following information:
+    \[(
+        \texttt{name},
+        \set{S},
+        \texttt{cap}_0,
+        \texttt{cap}_\partial,
+        \texttt{cap}_C
+    )\]
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Service}
+The previous section highlighted the information SA requires to deploy new application servers and services.  This section describe the services provided by SA to AADs.
+
+\subsection{Hardware}
+Virtual machines will host the operating system and the application in all cases, unless sufficient proof as to why it \emph{needs} to be hosted on physical servers is supplied.  Generally this means that the only \emph{candidates} for physical servers are those in \lHIS, running products that the vendor explicitly refuses to support under a virtual environment.
+
+\subsection{Storage}
+Based on these requirements, the system administrators will decide the particular technology {\em implementation}, and the most suitable will be selected.  This could be any one of \emph{SAN}, \emph{NAS} (NFS, SMB, etc.), or local storage, and decided upon at SA discretion.
+
+\subsection{Filesystem Layout}
+The application will be installed in accordance to the \emph{FHS}.  This means that the application will be split into two distinct areas:
+
+\begin{tabular}{ll}
+    \hline
+    Data Class & Location\\
+    \hline
+    Binaries & \texttt{/opt/<vendor>/<product>}\\
+    Application Data & \texttt{/var/opt/<vendor>/<product>/}\\
+    Direct Data & \texttt{/srv/<dept>/}\\
+    \hline
+\end{tabular}
+
+\DSMB{
+    Data here takes two forms which we will refer to as ``Application Data'' and ``Direct Data''.
+
+    Application Data:
+
+    \digraph[scale=0.5]{pol1}{
+        node[shape=egg];rankdir=LR;Users->App->Data
+    }
+
+    However, this is not the case where the service is some form of a \emph{file service}, in which case there is no application middle-man - for example NFS, or Samba/SMB:
+
+    \digraph[scale=0.5]{pol2}{
+        node[shape=egg];rankdir=LR;Users->Data
+    }
+}
+
+\subsection{SUDO Access}
+Where AADs have already been granted shell access to an applications server, certain commands may require escalated privilege (above that which the application user $\texttt{user}_{app}$ already has).  In such circumstances, the particular set of commands - inclusive of their associated command arguments - will need to be forwarded to the SA for approval.
+Unless deemed insecure in some respect, the SAs will add these to the system \texttt{sudoers} configuration, and the AADs can execute those commands - with the appropriate escalated privileges - by prepending the command with \texttt{sudo}.
+
+Note that in general, sudo command matches need to be bounded, that is - each should map to at least one command, but at most - a finite set of commands.  The following examples will illustrate this point:
+
+\begin{tabular}{lcc}
+    \hline
+    SUDO & \multicolumn{2}{c}{Judgement}\\
+    Command Match & FHSC & Secure\\
+    \hline
+    {\tt cmd.sh} & No & No\\
+    {\tt /bin/rm} & Yes & No\\
+    {\tt /bin/rm -rf} & Yes & No\\
+    {\tt /bin/rm -rf /srv/data-miners/data*} & Yes & Yes\\
+    {\tt /opt/informatica/etl/bin/cmd.sh} & Yes & Yes\\
+    \hline
+\end{tabular}
+
+Of course it goes without saying that any sudo command will become property of SA prior to provisioning.  Also note that the term ``Secure'' used above is in relation to the system security - it says nothing about application security as those policies belong solely to AAD.
+
+\section{Application Management}
+
+\subsection{Software Deployment}
+\begin{enumerate}
+    \item SAs own and manage all operating system software.
+    \item SAs will \emph{assist} in software deployment of the required third-party applications, however the ownership of these products will remain property of AADs.
+    \item AADs will have limited shell access to \lLIS servers.
+    \item AADs will carry out installations in all \lLIS servers, and in doing so, prepare a short, consise and complete documentation of the process that SAs can follow on the \lHIS servers.
+    \item AADs will not have any direct access to \lHIS servers.
+    \item The installation will honour the FHS specifications.
+\end{enumerate}
+
+\subsection{Remote Access}
+For each access that is required by {\em internal staff members}, the following information will be required:
+
+\begin{tabular}{ll}
+    \hline
+    Attribute & Description\\
+    \hline
+    \texttt{who}    & This is the LDAP \emph{group}\footnotemark that requires access\\
+    \texttt{cname}  & The service-based alias, or \emph{CNAME} record, in DNS\\
+    \texttt{proto}  & The protocol $\in \{
+        \texttt{sftp},
+        \texttt{rsync},
+        \texttt{ssh}\footnotemark
+    \}$\\
+    \texttt{why}    & This is a \emph{CYA}, a simple reason will suffice\\
+    \hline
+\end{tabular}
+\footnotetext[2]{This excludes \emph{username}s}
+\footnotetext[3]{Shell access is only granted only if it is deemed absolutely necessary}
+
+Note that access will NOT be provided to the production servers under most circumstances. See \autoref{fig:procnonprd}.  Furthermore, where access is granted, it will be for human accounts, not application accounts.  This implies that users will not be able to {\tt su} to an application user either, but instead granted appropriate {\tt sudo} rights.
+
+\STEP{
+    For each remote access request, provide SA with:
+    \begin{equation}
+        (\texttt{who}, \texttt{cname}, \texttt{proto}, \texttt{why})
+    \end{equation}
+}
+
+\subsubsection{\lLIS Servers}
+The day-to-day management of the \lLIS servers is open, and the AADs have direct access for pushing files to designated areas on the filesystem via an appropriate file-transfer protocol as depicted in the following diagram:
+
+\begin{figure}[here]
+    \centerline{\includegraphics[width=28pc]{change-process-lis.pdf}}
+    \caption{\lLIS process flow}
+    \label{fig:procnonprd}
+\end{figure}
+
+The file-transfer protocol of choice will be either {\tt rsync} or {\tt scp} in most situations, unless other restrictions are in effect and other propriaty protocols are required.\footnote{{\tt sftp} protocol is not yet available due to the limited security features available in the OpenSSH available on current enterprise Linux releases.}
+
+Furthermore, the file-push will be be allowed only to controlled areas, and in a controlled manner.  If the protocol permits, AADs will be able to push files directly to the final destination path in the filesystem with the appropriate $\texttt{user}_{app}$ ownerships and permissions - for example via the \texttt{rsync} protocol.
+
+Where the protocol cannot offer this service, as in the case of \texttt{sftp}, then a special spool area will be created to house the pushed data.  The AADs will then need to provide appropriate scripts which the SAs will deploy on the servers to automate the positioning of the spool data into the approapriate paths in the filesystem, with appropriate ownerships and permissions.
+
+\subsubsection{\lHIS Servers}
+The servers in the \lHIS environment however is not as open; there is no direct access whatsoever to the server, and the process by which files are pushed to it are controlled.  That is, the AADs will push their changes via VCS to a staging area and submit a ticket to the SAs via the provided ticketing system, explaining that they have changes in the VCS ready to be pushed into production, and other relevant details:
+\begin{figure}[here]
+    \centerline{\includegraphics[width=28pc]{change-process-his.pdf}}
+    \caption{\lHIS process flow}
+    \label{fig:procprd}
+\end{figure}
+
+\subsubsection{Vendor Access}
+There is no formal process by which vendor access will be provided.  Every case will be treated individually, and the general consensus is that this will not be allowed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Service Level Agreement}
+The level of service provided to the AADs by the SAs is best described in the following table:
+
+\begin{tabular}{lll}
+    \hline
+    Support Class & $\in$ SLA\\
+    \hline
+    After-Hours Support & Maybe\\
+    Third-Party Software Packaging & Yes\\
+    Third-Party Software Installations & Partial\\
+    Scripting & Partial\\
+    Application-Level Debugging & No\\
+    \hline
+\end{tabular}
+
+\begin{enumerate}
+    \item SA {\em may} provide after-hours support where given sufficient notification ($\geq$ 48 hours), and there is good reason preventing the work from being carried out during business hours.  This is ultimately upto the business to decide.
+    \item Third-party installations required by AAD, are expected to be performed by AAD, however support will be provided to AAD.  It is expected that all software that is to be installed on any server is packaged for the host operating system, in alignment with the FHS and local system guidelines.
+    \item Support for writing script will be provided, but the script are ultimately the property of the AADs, and no responsibility for them will be assumed by the SAs.
+\end{enumerate}
+
+\section{Ownership}
+\begin{tabular}{lll}
+    \hline
+    Item & Ownership\\
+    \hline
+    Operating System & SA\\
+    Operating System Packages & SA\\
+    Operating System Package Maintenance & SA\\
+    Vendor Software Storage & SA\\
+    Vendor Software Installation on \lLIS & AAD\\
+    Vendor Software Installation on \lHIS & SA\\
+    Inhouse Scripts & AAD\\
+    \hline
+\end{tabular}
+
+\section{Migration}
+Where the underlying server is out-of-support, and to be replaced by a new server - the new server will be a fresh build, and the application installation on the new server will be carried out.  The application server will not simply be cloned across to the new environment.
+
+\begin{appendix}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linux Filesystem Heirarchy Standard (FHS)}
+
+\subsection{Enterprise Application Guidelines}
+The installations carried out on any UNIX machine fall under two categories...
+\begin{enumerate}
+    \item Distribution Packages
+    \item Third-Party Packages
+\end{enumerate}
+
+Where possible, it's best to use the packages provided by the particular distribution, for example Debian systems can install native Debian packages using the {\tt apt} toolset.  Where there is a need to install software that is not provided by the distribution, this guide attempts to set a clear policy in hope to maintain a clean manageable system.
+
+\subsection{{\tt/opt} - Third-Party Software}
+Third-party software (application binaries and supporting framework) must be installed under the following structure...
+
+\begin{verbatim}
+/opt/<vendor>/<product>
+\end{verbatim}
+
+While the structure under {\tt<vendor>} is generally flexible, it is preferred to have the additional {\tt<product>} directory to allow for possible future growth.  The files in {\em/opt} should house the entire \emph{static} component of the application installation.  Technically this means that it should be possible to mount {\tt/opt} read-only without any runtime consequences.
+
+Once the installation is complete, the following tree structure may be populated with (only) \emph{symbolic links}, and this task is never to be embedded as part of any post-installation script which assumes ownership over this space.  This is due to the fact that this area of the filesystem has no formal laws, and is purely regulated by policies.
+
+The symbolic links point back to the binaries, man pages, libraries, etc. under {\tt/opt/<vendor>/<package>}, and the primary purpose behind them is to offer the SA and AAD a standard interface, hiding the less-friendly details of {\tt/opt/<vendor>/<package>}.
+
+\subsubsection{Binaries}
+\begin{verbatim}
+/opt/bin
+/opt/sbin
+\end{verbatim}
+
+\subsubsection{Libraries}
+\begin{verbatim}
+/opt/lib
+\end{verbatim}
+
+\subsubsection{Header Files}
+\begin{verbatim}
+/opt/include
+\end{verbatim}
+
+\subsubsection{Documentation}
+\begin{verbatim}
+/opt/doc
+/opt/man
+/opt/info
+\end{verbatim}
+
+\subsection{{\tt/var} - Variable Data}
+The variable data (data that is modified at application runtime (including creation and unlinking) must be installed in {\tt/var} as defined by the following structure...
+\begin{verbatim}
+/var/opt/<vendor>/<product>
+/var/spool/<vendor>/<product>
+/var/log/<vendor>/<product>
+/var/lock/
+/var/run/
+/var/tmp/
+\end{verbatim}
+
+Data that is used during application operation should be stored in {\tt/var/opt/<vendor>/<product>}.  This data may be read-only or read/write in nature.  The {\tt/var/opt} filesystem need not be a single volume.  Depending on application requirements separate SAN devices, logical volumes or even network volumes may be mount under {\tt/var/opt/<provider>} to provide the storage needed.  This directory should never contain any configuration files, the user should never need to modify anything in this directory by hand.  This space provides storage space for running applications.
+
+{\tt/var/spool/<vendor>/<product>} contains data which is to be processed at a later time, and this data will not be deleted on boot. Data that needs to be temporarily stored in preparation for later processing by an application should be located in this directory.
+
+{\tt/var/log/<vendor>/<product>} - Where possible logs should generally be stored in this directory provided the application supports configuration of the log locations.
+
+{\tt/var/tmp} contains temporary data that will not be removed between reboots, unlike {\tt/tmp}, which the application can safely assume - all file will be removed between reboots.  However, applications should never assume that this space is ``storage'' space.
+
+Files in {\tt/var/run/} will be deleted on boot.
+
+Application should never, under any circumstances, create, update, modify, or remove any files under {\tt/var}.
+
+\subsection{{\tt/tmp} - Temporary Data}
+The {\tt/tmp} directory must be made available for programs that require temporary files. Programs must not assume that any files or directories in /tmp are preserved between invocations of the program.
+
+Application can safely assume - all file will be removed between reboots.  The conventional practice is in fact to purge /tmp on bootup, however on some recent Linux distributions, a purge is only carried out based on an aging system.
+
+\subsection{{\tt/etc} - Application Configuration Data}
+Storing configuration data under /etc/opt/<vendor> is optional but preferred.  In most cases 'enterprise' applications tend to be fairly limited in their ability to relocate their configuration files.
+
+\begin{verbatim}
+/etc/opt/<vendor>/<product>
+\end{verbatim}
+
+\section{{\tt/srv} - Static Data Served by Applications}
+
+This directory is generally reserved for static data that is served in it's raw state with no further processing through and application or service.  Commonly this data would be for NFS, FTP or HTTP services.
+
+Site-specific '''data served''' by the server must reside in {\tt/srv/}, and take one of the following forms, but which ever form is chosen, should be consistently used accross your site.
+
+\begin{verbatim}
+/srv/<vendor>/<product>/
+/srv/<protocol>
+/srv/<protocol/service>/
+\end{verbatim}
+
+\subsection{{\tt/usr}}
+Shared readonly static data.  This partition should contain system binaries, and no variable data, which means it should be mounted readonly without any problems.
+\begin{verbatim}
+/usr/
+\end{verbatim}
+
+\subsection{{\tt/dev} - Device Files}
+\begin{verbatim}
+/dev/
+\end{verbatim}
+
+\subsection{Bringing it all together}
+
+If an application can successfully locate all components in these diverse areas then it is usually helpful to then symbolic link them back to {\tt/opt/<vendor>/<package>}.  By doing so application administrators can easily see the relocated files and directories real locations and also obtain access to them with less effort.
+
+Providing these sym-links can also mean that applications that otherwise do not support relocation can be coerced to do so.  Tomcat is a prime example of this and on Red Hat systems the contents of the Tomcat base directory /usr/share/tomcat5 are almost entirely sym-links.
+
+
+\subsubsection{OAS Example}
+As an example the Oracle Application Server suite would ideally be laid out as follows (the <product> dir can change as necessary):
+
+\begin{tabular}{lll}
+\hline
+Legacy location & Desired location & Data type\\
+\hline
+/u01/app/oracle/ & /opt/oracle/as/ & Binaries/framework\\
+/var/log/j2ee/ & /var/log/oracle/as/ & Logs\\
+/u02/ & /var/opt/oracle/as/ & Data\\
+\hline
+\end{tabular}
+
+
+\subsubsection{OpenLDAP}
+\begin{verbatim}
+set -e
+
+PKG=openldap-2.4.19
+SRC=/usr/src/${PKG}
+PREFIX=/opt/${PKG}
+PREFIX_VAR=/var/opt/${PKG}
+
+
+
+#. Build...
+cd ${SRC}
+
+make veryclean
+
+./configure \
+  --enable-modules \
+  --enable-overlays=mod \
+  --prefix=${PREFIX} \
+  --sharedstatedir=${PREFIX_VAR}/share \
+  --localstatedir=${PREFIX_VAR}/local
+
+make
+make depend
+
+
+
+#. Install...
+make install
+
+
+
+#. And now, create symbolic links...
+
+ln -s -f ${PREFIX} /opt/openldap
+ln -s -f ${PREFIX_VAR} /var/opt/openldap
+
+for execdir in bin sbin; do
+  for executable in ${PREFIX}/${execdir}/*; do
+    ln -s -f ${executable} /opt/${execdir}/$(basename ${executable})
+  done
+done
+
+for mandir in ${PREFIX}/share/man/*; do
+  mkdir -p /opt/man/$(basename ${mandir})
+  for manfile in ${mandir}/*; do
+    ln -s -f ${manfile} /opt/man/$(basename ${mandir})/$(basename ${manfile})
+  done
+done
+\end{verbatim}
+
+Notice that all "static" data is in {\tt/opt/openldap}, while all "variable" data is in {\tt/var/opt/openldap}.
+
+Also note that we still have to go around and make all the appropriate symbolic links in special subdirectories of {\tt/opt/}.
+
+%http://www.pathname.com/fhs/pub/fhs-2.3.html
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{SUDO}
+\subsection{Overview}
+Sudo (su "do") allows a system administrator to delegate authority to give certain users (or groups of users) the ability to run some (or all) commands as root or another user while providing an audit trail of the commands and their arguments.
+
+Sudo is used in place of direct logins as an application user and commands such as su - <appuser> which allows access to such user accounts without knowledge of the accounts password. In most cases application user accounts will have no password set or if a password is required it will be unknown by everyone including system administrators.
+
+\subsection{Access Rules}
+Any request for access to commands to be run through sudo will adhere to the following rules:
+
+\begin{enumerate}
+    \item All privilege escalation must be performed through sudo unless it is proven beyond any doubt that sudo will not work
+    \item Any command run as a system level user (eg. root) must be performed through the users personal user ID
+    \item Application users can only run sudo commands as a system level user (eg root) for automation tasks and using the nopasswd option
+    \item Application owners may grant shell access via sudo to any application users they are responsible for on the condition that said owner will also take full responsibility for any and all actions performed as that application user
+\end{enumerate}
+
+\subsection{Operating Environment}
+The following restrictions apply to any command that is run through sudo:
+
+\begin{enumerate}
+    \item All environment variables will be unset before the command is run with the exception of the following:
+    \item Upon successful authentication for a sudo command the user will not be prompted for the password again unless idle for 120 minutes or longer
+    \begin{multicols}{3}
+    \begin{itemize}
+        \item{\tt COLORS}
+        \item{\tt DISPLAY}
+        \item{\tt HOSTNAME}
+        \item{\tt HISTSIZE}
+        \item{\tt INPUTRC}
+        \item{\tt KDEDIR}
+        \item{\tt LANG}
+        \item{\tt LC\_ADDRESS}
+        \item{\tt LC\_CTYPE}
+        \item{\tt LC\_COLLATE}
+        \item{\tt LC\_IDENTIFICATION}
+        \item{\tt LC\_MEASUREMENT}
+        \item{\tt LC\_MESSAGES}
+        \item{\tt LC\_MONETARY}
+        \item{\tt LC\_NAME}
+        \item{\tt LC\_NUMERIC}
+        \item{\tt LC\_PAPER}
+        \item{\tt LC\_TELEPHONE}
+        \item{\tt LC\_TIME}
+        \item{\tt LC\_ALL}
+        \item{\tt LANGUAGE}
+        \item{\tt LINGUAS}
+        \item{\tt LS\_COLORS}
+        \item{\tt MAIL}
+        \item{\tt PS1}
+        \item{\tt PS2}
+        \item{\tt QTDIR}
+        \item{\tt USERNAME}
+        \item{\tt \_XKB\_CHARSET}
+        \item{\tt XAUTHORITY}
+    \end{itemize}
+    \end{multicols}
+\end{enumerate}
+\end{appendix}
+
+%-------------------------------------------------------------------------------{
+\input{footer}

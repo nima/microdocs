@@ -1,0 +1,524 @@
+%!TEX TS-program = XeLaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x007}
+\newcommand{\theVersion}{0.1}
+\newcommand{\theTitle}{Support Vector Machines}
+\newcommand{\theKeywords}{svm, machine-learning, supervised-learning}
+\newcommand{\theAbstract}{A mathematical view at support vector machines}
+
+\input{header}
+%-------------------------------------------------------------------------------
+
+\section{Preliminary}
+
+\subsection{Notation}
+
+\begin{flalign*}
+    \lM
+        &: \comment{the support vector machine}\\
+    \set{Z}
+        &: \comment{infinite set of all integers}\\
+    \set{R}
+        &: \comment{infinite set of all real numbers}\\
+    \set{R}^2 = \set{R} \times \set{R}
+        &: \comment{2-dimentional coordinate system}\\
+    \set{R}^3 = \set{R} \times \set{R} \times \set{R}
+        &: \comment{3-dimentional coordinate system}\\
+    \set{R}^N
+        &: \comment{$N$-dimentional coordinate system}\\
+    %
+    \luniset
+        &: \comment{infinite data population in the universe}\\
+    g
+        &: \comment{multidimensional decision surface}\\
+    \lfncset
+        &: \comment{set of all decision hypotheses $\hat{f}$}\\
+    f \in \lfncset
+        &: \comment{hypothetically optimal decision function on $\luniset$}\\
+    \tilde{f} \in \lfncset
+        &: \comment{a derived decision function on $\ltrnset$}\\
+    \tilde{f}_o \in \lfncset
+        &: \comment{derived optimal decision function on $\ltrnset$}\\
+    r_x
+        &: \comment{perpendicular distance from $\vect{x}$ to $\tilde{f}$}\\
+    %
+    \vect{x} =
+        \left(\begin{smallmatrix}
+            x_1\\ x_2\\ \vdots\\ x_N
+        \end{smallmatrix}\right)
+        \in \set{R}^N
+        &: \comment{vector (of size $N$, in $\set{R}^N$)}\\
+    \vect{x}^\intercal = (x_1, x_2, \ldots, x_N) \in \set{R}^N
+        &: \comment{transposed vector (of size $N$, in $\set{R}^N$)}\\
+    \vect{\lshvec} \in \set{R}^N
+        &: \comment{unique shortest position vector terminating on $\tilde{f}$}\\
+    %
+%    \lshd{u}{f}
+%        &: \comment{shadow of vector $\vect{u}$ onto the hyperplane $\tilde{f}$}\\
+    \lcls(\vect{x}) = \lcls_{\vect{x}} \in \{ -1, +1 \}
+        &: \comment{classification of vector $\vect{x}$}\\
+    %
+    \ltrnset = \{ \ltrn_i \}_{i=1}^N \subset \set{R}^N \times \{ -1, +1 \}
+        &: \comment{population of training data}\\
+    \ltrn = (\vect{x}, \lcls_{\vect{x}}) \in \ltrnset
+        &: \comment{training data element pair}\\
+    \ltrnset_+, \ltrnset_- \subset \ltrnset
+        &: \comment{training data of class $+1$ and $-1$ respectively}\\
+    \ltrn_+ = (\vect{x_+}, +1) \in \ltrnset_+
+        &: \comment{support vector, where } \lcls(\vect{x_+}) = +1\\
+    \ltrn_- = (\vect{x_-}, -1) \in \ltrnset_-
+        &: \comment{support vector, where } \lcls(\vect{x_-}) = -1\\
+%
+    \Lambda
+        &: \comment{the {\em Lagrange function}}\\
+    \lambda_i
+        &: \comment{auxiliary nonnegative {\em Lagrange multipliers}}
+\end{flalign*}
+
+\subsection{Artificial Neurons}
+An artificial neuron is {\em a model inspired by} biological neuron; to call it a model {\em of} biological neuron would be a vulgarization of what a real neuron does.
+
+%Hence the shadow of $\vect{v}$ onto $\vect{w}$ is defined as follows:
+%\[
+%    \lshd{v}{u} = \vcard{u}\cos\theta = \frac{\vect{u}\cdot\vect{u}}{\vcard{v}}
+%\]
+
+\subsection{Assumptions}
+We make the assumption that the training elements collected in $\ltrnset \subset \luniset$ is randomly selected and $iid$; we can thus be confident that it is a good representation of $\luniset$, as long as there are sufficient elements in $\ltrnset$.
+
+For the first part of this paper, we will also make the assumption that the data universe $\luniset$ is {\em linearly separable}, and later we will generalize and remove this restriction.
+
+\subsection{Training Data - $\ltrn \in \ltrnset$}
+Support vector machines fall under the paradigm of {\em supervised learning}, this means that the machine $\lM$ must be taught by a teacher, and thus learns by example, whence the term ``supervised''.  The learning process requires that data be mathematically represented; and as a generally accepted convention we will represent the the {\em training data} set $\ltrnset$, as a set of tuples the following form:
+\begin{flalign*}
+    \ltrnset &= \{ \ltrn_1, \ltrn_2, \ldots, \ltrn_l \}\\
+        &= \{ \ltrn_i \}_{i=1}^l\\
+        &= \{ \vect{x}_i, \lcls_{\vect{x}_i} \}_{i=1}^l\\
+\end{flalign*}
+
+That is, the training elements $\ltrn$ are tuples of size two, composed of an input example, and a corresponding output:
+\[
+    \ltrn = (\vect{x}, \lcls_{\vect{x}})
+\]
+
+The vector $\vect{x} \in \lrealset$ is a particular training input vector example, and $\lcls \in \{-1, +1\}$ is the corresponding classification for it.
+
+The training set is a strict subset of the data universe; thus $\tilde{f}$, which is learned from $\ltrnset$, will always be an approximation of $f$, which is the hypothetical hyperplane hypothesis that optimally classifies $\luniset$, that is:
+\begin{flalign*}
+    \hat{f} : \vect{x} \in \lrealset \to \{ -1, +1 \} \suchthat \hat{f}(\vect{x}) \cong {f}(\vect{x})
+\end{flalign*}
+
+For this approximation to not hinder the learning process, we must assume that $\ltrnset$ is $iid$ and hence an accurate representation of $\luniset$.
+
+\subsection{Vectors in Euclidean Space $\lrealset$}
+
+It's important to define the exact meaning of a vector, associated terms and notations prior to proceeding:
+
+\DEFN{Vectors}{
+A directed line segment in Euclidean space is called a {\em vector}.  A vector consists of \emph{length}, and \emph{direction}, and length-1 vectors are called a {\em unit vectors}.  Finally, a point in hyperspace $\lrealset$ can always be defined as a {\em position vector}, which is a vector that begins at the origin of the hyperspace.
+}
+
+\DEFN{Dot Product}{
+    \begin{flalign*}
+        \vect{w}^\intercal \cdot \vect{v} &= \vcard{w} \vcard{v} \cdot \cos\theta
+    \end{flalign*}
+}
+
+\subsubsection{Perpendicular Position Vector to the Hyperplane - $\varkappa$}
+\paragraph{Magnitude - $\vcard{\lshvec}$}
+A linear decision surface $g$ in a $N$-dimensional Euclidean space, can be described as:
+\begin{flalign}
+    g: \vect{w}^\intercal \cdot \vect{x} + b &= 0\label{eq:g}
+\end{flalign}
+
+By definition, the vector $\vect{w}$ is necessarily perpendicular to $g$; this implies that $\vect{\lshvec}$, the shortest position vector that terminates at $g$, will be the product of $\uvect{w}$ by the scalar $\vcard{\lshvec}$, since $\vect{\lshvec} \parallel \vect{w}$.  Furthermore, being perpendicular means that the cosine of the angle between $\vect{w}$ and $g$ will be 1.  The following thus is derived via the dot product rule:
+\begin{flalign*}
+    0 &= \vect{w}^\intercal \cdot \vect{x_s} + b\\
+      &= \vcard{w} \vcard{\lshvec} \cdot \cos\theta + b\\
+    \therefore \vcard{\lshvec}
+        &= -\frac{b}{\vcard{w} \cos\theta}\\
+        &= -\frac{b}{\vcard{w}} \HSpace\comment{since $\theta$ is zero}
+\end{flalign*}
+
+\paragraph{Direction - $\uvect{\lshvec}$}
+Trivially we define the unit vector $\uvect{\lshvec}$ as follows:
+\begin{flalign*}
+    \vect{\lshvec} &\parallel \vect{w}\\
+    \therefore \uvect{\lshvec} &= \uvect{w}
+\end{flalign*}
+
+\paragraph{Position Vector - $\vect{\lshvec}$}
+The product of the unit vector by its magnitude will result in the position vector:
+\begin{flalign*}
+    \vect{\lshvec}
+        &= \vcard{\lshvec} \uvect{w}\\
+        &= -\frac{b}{\vcard{w}} \frac{\vect{w}}{\vcard{w}}\\
+        &= -\frac{b\vect{w}}{\vcard{w}^2}
+\end{flalign*}
+
+\subsubsection{Geometric Margin - $r_x$}
+Given the hyperplane $g$, we would like to calculate the perpendicular distance from it to any given point from the input vector set; we call this the geometric margin $r_x$.  Where the the input vector is {\em above} the hyperplane, $r_x$ will be positive, and where it is {\em below}, it will be negative.
+
+Taking an arbitrary point (position vector) from the input space, $\vect{x}$, and formulate the perpendicular distance from the hyperplane $g$ to it.  From the dot product rule we know that the shadow of $\vect{x}$ cast onto $\vect{w}$ will be equal to $\vect{x} \cos\theta$, and that this distance is equal to $r + \vcard{\lshvec}$:
+\begin{flalign*}
+    \vcard{x} \cos\theta &= r_x + \vcard{\lshvec}\\
+    \therefore r_x &= \vcard{x} \cos\theta - \vcard{\lshvec}\\
+        &= \uvect{\lshvec} \cdot \vect{x} - \vcard{\lshvec}\\
+        &= \uvect{w} \cdot \vect{x} - \vcard{\lshvec}\\
+        &= \frac{\vect{w}}{\vcard{w}} \cdot \vect{x} + \frac{b}{\vcard{w}}\\
+        &= \frac{\vect{w} \cdot \vect{x} + b}{\vcard{w}}\\
+\end{flalign*}
+
+We can then substitute \eqref{eq:g} into this equation an get:
+\begin{flalign}
+        r_x = \frac{g}{\vcard{w}}\label{eq:r}
+\end{flalign}
+
+\subsection{Linear Separation}
+Assuming that the data {\it is} linearly separable in the given $\set{R}^N$ space, then there exists a line ($N=2$), plane($N=3$), or hyperplane ($N \in \set{Z}$ where $N > 0$) that can classify the data as either $+1$, or $-1$.  Linear seprability hence implies a binary classification problem.
+
+\DEFN{Dichotomy}{
+Data that classifies into exactly two mutually exclusive, jointly exhaustive subsets, forms what is known as a {\em dichotomy}; this implies that the problem lies in binary classification space.  That is, is one class will $\lcls = -1$, and the other $\lcls = +1$ - these values hold no significance other their mathematically convenient properties.
+}
+
+We can hence state that the following must also be true, given that the partitioning forms a dichotomy:
+\begin{flalign*}
+    \ltrnset_+ \cap \ltrnset_- &= \emptyset\\
+    \ltrnset_+ \cup \ltrnset_- &= \ltrnset\\
+\end{flalign*}
+
+
+In the simplest case, given a $2$-dimensional space, the familiar definition of a line is: \[ y = m x + b \] which can be rewritten as: \[ b = -m x + 1y \] To allow us to generalize, we replace $-m$, $1$, $x$, $y$ with $w_1$, $w_2$, $x_1$, $x_2$ respectively, and then rewrite the equation in vector form:
+\begin{flalign*}
+    b &= -m x + 1y\\
+      &= w_1 x_1 + w_2 \cdot x_2\\
+      &= (w_1, w_2)^\intercal \cdot (x_1, x_2)\\
+      &= \vect{w}^\intercal \cdot \vect{x}
+\end{flalign*}
+
+%|Zz|: \col@number is a counter holding the current number of columns
+%[10:28am] |Zz|: it is 1 outside of the multicol env
+
+Note in this derivation, we are no longer restricted to a 2-dimensional space; this formula holds for Eucledian spaces of all cardinalities.
+
+\subsubsection{Decision Surface}
+Assuming that this is the equation of the hyperplane that classifies the training data accurately, we defined the {\bf decision surface} $f(\vect{x})$ as follows:
+\begin{flalign}
+    \tilde{f}(\vect{x}) : \vect{w}^\intercal \cdot \vect{x} + b = 0\label{eq:dsf}
+\end{flalign}
+
+\subsubsection{Decision Function}
+From this, we can derive the {\bf decision function}:
+\begin{flalign}
+    \tilde{f}(\vect{x}) = \signum{\vect{w}^\intercal \cdot \vect{x} + b}\label{eq:dfn}
+\end{flalign}
+
+with $\vect{w}, \vect{x} \in \set{R}^N$ and $b \in \set{R}$.
+
+
+\section{Separation Hyperplanes - $g$}
+\subsection{Constraint Functions}
+Given the training set $\set{D}$, we define the {\em two} multidimensional linear decision surfaces as follows:
+\begin{flalign}
+    \vect{w}^\intercal \cdot \vect{x} + b &\leq -1 \mbox{ if } \lcls_{\vect{x}} = -1\label{eq:clsmns}\\
+    \vect{w}^\intercal \cdot \vect{x} + b &\geq +1 \mbox{ if } \lcls_{\vect{x}} = +1\label{eq:clspls}
+\end{flalign}
+
+The equality of \eqref{eq:clsmns} defines the decision surface, {\em below} which there exists only input vectors of class $-1$, and the equality of \eqref{eq:clspls} defines the decision surface, {\em above} which there exists only input vectors of class $+1$.
+
+These surfaces {\em are} parallel, but are {\em not equal} because they are defined within a continuous space.  These surfaces then define the {\bf class boundaries} between which there terminates no input position vector.  Intuitively, any hyperplane that falls between the class boundaries is a decision surface, and it will correctly classify the training data.
+
+We can merge these two equations into one by using the classification function explicitly:
+\begin{flalign*}
+    \vect{w}^\intercal \cdot \vect{x} + b &\leq -1 \mbox{ if } \lcls_{\vect{x}} = -1, &
+    \vect{w}^\intercal \cdot \vect{x} + b &\geq +1 \mbox{ if } \lcls_{\vect{x}} = +1\\
+    \therefore
+    \vect{w}^\intercal \cdot \vect{x} + b + 1 &\leq 0 \mbox{ if } \lcls_{\vect{x}} = -1, &
+    \vect{w}^\intercal \cdot \vect{x} + b - 1 &\geq 0 \mbox{ if } \lcls_{\vect{x}} = +1\\
+    \therefore
+    -(\vect{w}^\intercal \cdot \vect{x} + b + 1) &\geq 0 \mbox{ if } \lcls_{\vect{x}} = -1, &
+      \vect{w}^\intercal \cdot \vect{x} + b - 1  &\geq 0 \mbox{ if } \lcls_{\vect{x}} = +1\\
+    \therefore
+    -(\vect{w}^\intercal \cdot \vect{x} + b) - 1 &\geq 0 \mbox{ if } \lcls_{\vect{x}} = -1, &
+      \vect{w}^\intercal \cdot \vect{x} + b  - 1 &\geq 0 \mbox{ if } \lcls_{\vect{x}} = +1
+\end{flalign*}
+
+Giving a single equation that applies for both classes:
+\begin{flalign*}
+    \lcls_{\vect{x}} (\vect{w}^\intercal \cdot \vect{x} + b) - 1 &\geq 0\nonumber\\
+    \therefore \lcls_{\vect{x}} (\vect{w}^\intercal \cdot \vect{x} + b) &\geq 1
+\end{flalign*}
+
+We formally rewrite this as an equality to form the \underline{constraint function} $\lconstr_i(\vect{w}, b)$:
+\begin{flalign}
+    \lconstr_i(\vect{w}, b)
+        &: \lcls_{\vect{x}_i} [\vect{w}^\intercal \cdot \vect{x}_i + b] \ge  1
+        \label{eq:constraint}
+\end{flalign}
+
+\subsection{Support Vectors}
+Of all the input position vectors in the training data set, those that impose the heaviest constraints on the feasable decision surfaces are termed {\bf support vector}.  More concretely then, any vector that satisfies the equality \eqref{eq:constraint} is by definition, a support vector.
+
+\subsection{Margin of Separation}
+In binary classification problems, the distance between the two supporting hyperplanes is called a {\em margin}.
+
+\subsection{Maximum Margin Optimization}
+
+\subsubsection{Optimal Hyperplanes}
+Given that the training set is only an approximate representation of the data universe, we can argue that selecting the decision surface that lies equidistant from the respective class boundaries will minimize the probability of misclassifying data {\em not} in the training set; this decision surface we will refer to as the {\bf optimal hyperplane}.
+
+The probability of misclassification can be further minimized, and generalization thus improved, by maximizing the distance between this optimal hyperplane, and the class boundaries\footnote{Proof for this statement will be presented when we discuss VC-dimensions in the context of statistical learning theory}.  The two hyperplanes that define the two class boundaries are also referred to as the {\em canonical hyperplanes}.
+
+The optimal hyperplane is hence defined as the surface that divides the two class boundaries \eqref{eq:clsmns} and \eqref{eq:clspls} perfectly, and maximizes their margin.
+
+\subsubsection{Decision Problem}
+The search for a decision surface that maximizes the margin between the two supporting hyperplanes then becomes an optimization problem, where the feasable solutions include {\em all} possible decision surfaces that classify the training data; that is, the optimal hyperplane {\em and} all suboptimal hyperplanes.
+
+We denote the optimal hyperplane as follows:
+\begin{flalign}
+    g(\vect{x})_o = \vect{w_o}^\intercal \cdot \vect{x} = b_o\label{eq:optdsf}
+\end{flalign}
+
+Similarly, we take the inequalities presented in \eqref{eq:clsmns} and \eqref{eq:clspls} and present the following two equalities that define the two class boundaries padding the optimal hyperplane:
+\begin{flalign}
+    \vect{w_o}^\intercal \cdot \vect{x_-} + b_o &= -1\label{eq:dsfmns}\\
+    \vect{w_o}^\intercal \cdot \vect{x_+} + b_o &= +1\label{eq:dsfpls}
+\end{flalign}
+
+Intuitively, these two hyperplanes slice through each and every support vector denoted by $x_-$ and $x_+$.
+
+The objective function for this optimization problem computes the margin for each decision surface, and we maximize the objective function to find the maximum margin.
+
+The constraints in this optimization problem are the positions of the supporting hyperplanes which are not allowed to cross their respective class boundaries.
+
+Subject to the constraints, we can formally state this problem as follows:
+\begin{flalign}
+    \lobjfno &= \max\lobjfn
+\end{flalign}
+
+To make this optimization problem tangible then, we need to mathematically describe the objective function $\Phi$.
+
+To describe the margin of separation mathematically, we constructing a vector $\vect{v}$ that originates at any support vectors, and terminats at another support vector of opposing class, and then project this vector onto $\vect{w}$ - the projection is a scalar that defines this margin.
+
+Let $\lcls(\vect{x_+}) = +1$ and $\lcls(\vect{x_-}) = -1$, we can calculate $\vect{v}$ as follows: \[ \vect{v} = \vect{x_+} - \vect{x_-} \]
+
+The margin of separation is then computed from projecting $\vect{v}$ onto $\vect{w}$ via the dot product:
+\begin{flalign}
+    \lobjfn
+        &= \vcard{v} \cos\theta
+        = \frac{\vect{w}^\intercal \cdot \vect{v}}{\vcard{w}}\nonumber\\
+    \therefore\lobjfno
+        &= \max\frac{\vect{w}^\intercal \cdot \vect{v}}{\vcard{w}}\label{eq:phi1}
+\end{flalign}
+
+Subtracting \eqref{eq:dsfmns} from \eqref{eq:dsfpls} we get:
+\begin{flalign*}
+    (\vect{w_o}^\intercal \cdot \vect{x_+} + b_o &= +1)\\
+    -(\vect{w_o}^\intercal \cdot \vect{x_-} + b_o &= -1)\\
+    \cline{1-2}
+    \vect{w_o}^\intercal \cdot (\vect{x_+} - \vect{x_-}) &= 2\\
+    \therefore \vect{w_o}^\intercal \cdot \vect{v} &= 2
+\end{flalign*}
+
+Substituting this into \eqref{eq:phi1} we get:
+\begin{flalign}
+    \lobjfno
+         = \frac{2}{\vcard{w_o}}
+         = \max\frac{2}{\vcard{w}}
+         \label{eq:phi2}
+\end{flalign}
+
+This margin of separation is hence the width of the widest street that separates the two classes.  Something that is extremely important in the above derivation, is that the objective function we sought is in fact convex; convexity implies that we are able to find the global minimum of our objective function, i.e., not get stuck at a local minima on the way.
+
+An efficient method employed to solve convex optimization problems of the form given here is {\em quadratic programming}.
+
+\section{Problem Definition}
+\subsection{Quadratic Optimization - Search for the Optimal Hyperplane}
+\subsubsection{The Primal Problem}
+\LEMMA{The Primal Problem}{
+    Given the training set $\ltrnset$, find the optimal values of the weight vector $\vect{w}$ and the bias $b$ such that they satisfy the constraint \eqref{eq:constraint}, and the weight vector and bias minimize the objective function $\lobjfn$.
+}
+
+This constrained optimization problem is known as the ``primal problem'', and it is characterized as follows \cite{Hay98}:
+
+\begin{enumerate}
+    \item The objective function ($\Phi$) is a {\em convex} function of its parameters.
+    \item The constraints ($\lconstr$) are {\em linear} in the parameters of $\Phi$.
+\end{enumerate}
+
+Accordingly, we may solve the {\em primal problem} by using the {\it method of Lagrange multipliers} \cite{Ber96}, where the lagrange multipliers are denoted by $\lambda_i$.
+
+\PROOF{
+The solution to the constrained optimization problem is determined by the {\em saddle point} of the Lagrangian function $\Lambda(\vect{w}, b, \lambda)$; this has to be {\em minimized} with respect to the parameters $\vect{w}$ and $b$, and be {\em maximized} with respect to the auxiliary nonnegative variables called {\em Lagrange multipliers}, denoted by $\lambda_i$.
+
+The objective function has been defined in \eqref{eq:phi2} as {\em maximization} problem, however the Lagrangian requires the primal problem to be a {\em minimization} problem; thus we redefine $\Phi_o$ as follows:
+\begin{flalign*}
+    \lobjfno
+        &= \frac{2}{\vcard{w_o}}
+            = \max\frac{2}{\vcard{w}}
+            = \max\frac{2}{\vcard{w}}\\
+        &\equiv \min\frac{\vcard{w}}{2}
+            \equiv \min\frac{\vcard{w}^2}{2}\\
+        &= \min\frac{\vect{w}^\intercal \cdot \vect{w}}{2}
+            = \min\frac{1}{2} \vect{w}^\intercal \cdot \vect{w}
+\end{flalign*}
+
+Also, we note that the Lagrangian requires linear {\em equalities} for the constraints, however we have a linear {\em inequality} - that means that we can't formally solve this problem, but we can do via a search.
+
+We construct the {\em Lagrangian function} with respect to the $l$ training vectors in $\set{D}$, using $\Phi$ and the equality-to-zero of \eqref{eq:constraint}; this is known as the {\em primal objective function}:
+\begin{flalign}
+    \Lambda(\vect{w}, b, \lambda)
+        &= \lobjfn
+            + \sum_{i=1}^l\lambda_i \lconstr_i(\vect{w}, b)\nonumber\\
+        &= \frac{1}{2} \vect{w}^\intercal \cdot \vect{w}
+            + \sum_{i=1}^l \lambda_i (\lcls_{\vect{x}_i}[
+                \vect{w}^\intercal \cdot \vect{x}_i + b
+            ] - 1)\nonumber\\
+        &= \frac{1}{2} \vect{w}^\intercal \cdot \vect{w}
+            + \sum_{i=1}^l \lambda_i (\lcls_{\vect{x}_i}\vect{w}^\intercal \cdot \vect{x}_i
+            + \lcls_{\vect{x}_i}b - 1)\nonumber\\
+        &= \frac{1}{2} \vect{w}^\intercal \cdot \vect{w}
+            + \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} \vect{w}^\intercal \cdot \vect{x}_i
+            + \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} b
+            - \sum_{i=1}^l \lambda_i\label{eq:lagrange}
+\end{flalign}
+
+
+\DEFN{Karush–Kuhn–Tucker conditions}{
+Karush–Kuhn–Tucker conditions (also known as the Kuhn-Tucker or KKT conditions) are necessary for a solution in nonlinear programming to be optimal, provided some regularity conditions are satisfied. It is a generalization of the method of Lagrange multipliers to inequality constraints.
+}
+
+Differentiating with respect to $\vect{w}$ and equating it to the zero vector gives us the \underline{\em first KKT condition of optimality}; and by by virtue of the convexity of the Lagrangian, this is garanteed to have a unique solution:
+\begin{flalign}
+    \frac{\partial\Lambda_i}{\partial\vect{w}}
+        &= \vect{w} + \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} \vect{x}_i
+        = \vect{0}\label{eq:optcond1}
+\end{flalign}
+
+Similarly, solving the saddle-point equations $\frac{\partial\Lambda_i}{\partial b} = 0$ gives us the \underline{\em second KKT condition of optimality}:
+\begin{flalign}
+    \frac{\partial\Lambda_i}{\partial b}
+        &= \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i}
+        = 0\label{eq:optcond2}
+\end{flalign}
+}
+
+From KKT equations, \eqref{eq:optcond1} and \eqref{eq:optcond2}, we can rewrite the constraint \eqref{eq:constraint} as follows:
+\begin{flalign}
+    \lconstr_i(\vect{w}, b)
+        &= \lambda_i(
+            \lcls_{\vect{x}_i}[\vect{w}^\intercal \cdot \vect{x}_i + b] - 1
+        )\HSpace\forall i \in [1 \ldots l]
+\end{flalign}
+
+\subsubsection{The Dual Problem}
+As mentioned earlier, the primal problem deals with a convex objective function and a set of linear constraints.  Given such a constrained optimization problem, it is possible to construct a second problem called the {\em dual problem}.  This second problem has the same optimal value as the primal problem, but with the Lagrange multipliers $\lambda_i$ providing the optimal solution.  We may thus state the duality problem as follows \cite{Ber96}:
+
+If the primal problem has an optimal solution, then so too will the dual problem, and the corresponding optimal values will be equal.  Furthermore, in order for $\vect{w}_o$ and $b_o$ to be an optimal primal solution, and $\lambda_o$ to be an optimal dual solution, it is necessary and sufficient that:
+\begin{flalign*}
+    \lobjfno
+        = \Lambda(\vect{w}_o, b_o, \lambda_o)\\
+        = \min_{\vect{w}, b}\Lambda(\vect{w}, b, \lambda_o)\\
+\end{flalign*}
+
+Since however the derived $\Phi$ (and hence $\Phi_o$) function here is independent of $b$, we can rewrite this as follows:
+\begin{flalign}
+    \lobjfno = \min_{\vect{w}}\Lambda(\vect{w}, b_o, \lambda_o)
+\end{flalign}
+
+To postulate the duality problem for our primal problem, we first begin by solving for $\vect{w}^\intercal \cdot \vect{w}$ from\eqref{eq:optcond1}:
+\begin{flalign}
+    \vect{w} &= - \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} \vect{x}_i\label{eq:w}\\
+    \therefore\vect{w}^\intercal \cdot \vect{w}
+        &= -\sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i}
+            \vect{w}^\intercal \cdot \vect{x}_i\label{eq:wx}\\
+        &= \left(-\sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} \vect{x}_i \right)
+            \left(-\sum_{j=1}^l \lambda_j \lcls_{\vect{x}_j} \vect{x}_j \right)\nonumber\\
+        &= \sum_{i=1}^l \sum_{j=1}^l
+            \lambda_i \lambda_j
+            \lcls_{\vect{x}_i} \lcls_{\vect{x}_j}
+            \vect{x}_i^\intercal \cdot \vect{x}_j\label{eq:ww}
+\end{flalign}
+
+We now substitute \label{eq:optcond2}, \eqref{eq:ww}, and \eqref{eq:wx}, into \eqref{eq:lagrange} to formulate the dual problem:
+\begin{flalign*}
+    Q(\lambda) = \Lambda(\vect{w}, b, \lambda)
+        &=  \frac{1}{2} \vect{w}^\intercal \cdot \vect{w}
+            + \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} \vect{w}^\intercal \cdot \vect{x}_i
+            + \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} b
+            - \sum_{i=1}^l \lambda_i\\
+        &=  \left(
+                1 - \frac{1}{2}
+            \right) \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i} \vect{w}^\intercal \cdot \vect{x}_i
+            + b \sum_{i=1}^l \lambda_i \lcls_{\vect{x}_i}
+            - \sum_{i=1}^l \lambda_i\\
+        &=  -\frac{1}{2}
+                \sum_{i=1}^l \sum_{j=1}^l
+                \lambda_i \lambda_j
+                \lcls_{\vect{x}_i} \lcls_{\vect{x}_j}
+                \vect{x}_i^\intercal \cdot \vect{x}_j
+            - \sum_{i=1}^l \lambda_i\\
+\end{flalign*}
+
+subject to the following {\em duality constraints}:
+\begin{flalign}
+    \lambda_i \geq 0\HSpace\forall i = 1, 2, \ldots, l\label{eq:lambda}
+\end{flalign}
+
+We may now state the dual problem:
+\LEMMA{The Dual Problem}{
+    Given the training sample $\ltrnset$, find the Lagrangian multipliers $\{\lambda_i\}_{i=1}^l$ that maximize the objective function
+\begin{flalign*}
+    Q(\lambda) &=  -\frac{1}{2}
+        \sum_{i=1}^l \sum_{j=1}^l
+        \lambda_i \lambda_j
+        \lcls_{\vect{x}_i} \lcls_{\vect{x}_j}
+        \vect{x}_i^\intercal \cdot \vect{x}_j
+        - \sum_{i=1}^l \lambda_i\\
+\end{flalign*}
+
+subject to the duality constraints defined in \eqref{eq:lambda}.
+}
+
+\PROOF{
+We first highlight the fact that the dual problem is cast entirely in terms of the training data.  Moreover, the function $Q(\lambda)$ to be maximized depends {\em only} on the input patters in the form of a set of dot products, $\{\vect{x}_i^\intercal \cdot \vect{x}_j\}_{i,j=1}^l$.
+
+Having determined the optimal Lagrange multipliers, denoted as $\lambda_{o,i}$, we may define the optimum weight vector $\vect{w}_o$ using\eqref{eq:w}:
+\begin{flalign}
+    \vect{w}_o &= - \sum_{i=1}^l \lambda_{o,i} \lcls_{\vect{x}_i} \vect{x}_i\label{eq:wo}
+\end{flalign}
+
+To compute the optimum bias $b_o$, we may use $\vect{w}_o$ and either of the two class boundary hyperplanes defined in\eqref{eq:dsfmns} and\eqref{eq:dsfpls}, thus write:
+\begin{flalign}
+    \vect{w_o}^\intercal \cdot \vect{x_+} + b_o &= +1\nonumber\\
+    \therefore b = 1 - \vect{w_o}^\intercal \cdot \vect{x_+}\label{eq:bo}
+\end{flalign}
+}
+
+The $lambda_i$ values that solve to zero denote input vectors that are not support vectors, and hence have no influence on the hyperplane and margin.  The ones that {\em do} have a value greater than zero are in fact support vectors, and they {\em do} have an influence on the hyperplane and margin.  Where the $lambda_i$ are very large, it generally means one of two things:
+\begin{enumerate}
+    \item The support vector is very influential
+    \item the support vector is an outlier
+\end{enumerate}
+
+\section{Foo}
+We now solve for the case where the partial derivative with respect to the Lagrangian multipliers $\lambda_i$ equates to zero, under the constraint that $\lambda_i > 0 \forall i$, and obtain the third condition of optimality:
+\begin{flalign}
+    \frac{\partial\Lambda_i}{\partial\lambda_i}
+        &= 0 = \sum_{i=1}^l \lcls_{\vect{x}_i}
+                (\vect{w}^\intercal \cdot \vect{x}_i)
+            + \sum_{i=1}^l \lcls_{\vect{x}_i} b
+            - l\label{eq:optcond3}
+\end{flalign}
+
+Hence the decision function will be:
+\begin{flalign*}
+    \hat{f}(\vect{z}) = \signum{
+        \sum_{i=0}^l \lambda_i (\lcls_{\vect{x}_i} \cdot \vect{z}) + b
+    }
+\end{flalign*}
+
+%-------------------------------------------------------------------------------
+\input{footer}

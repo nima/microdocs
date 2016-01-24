@@ -1,0 +1,228 @@
+%!TEX TS-program = XeLaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x001}
+\newcommand{\theVersion}{0.1}
+\newcommand{\theTitle}{Set Theory}
+\newcommand{\theKeywords}{mathematics}
+\newcommand{\theAbstract}{Simple concepts of Set Theory.}
+
+\input{header}
+\raggedbottom
+%-------------------------------------------------------------------------------
+
+\section{Notation}
+
+\begin{subequation}[arabic]
+For the following definitions, let $\set{A}$ represent a particular set, and let $a \in \set{A}$.
+
+\begin{flalign*}
+    \set{A}^* &: \comment{the infinite set of \emph{sequences} composed of}\\
+        &\HSpace\comment{\emph{zero or more} elements of $\set{A}$}\\
+    \set{A}^+ &: \comment{the infinite set of \emph{sequences} composed of}\\
+        &\HSpace\comment{\emph{one or more} elements of $\set{A}$}\\
+    \mathcal{P}(\set{A}) &: \comment{The powerset of $\set{A}$}\\
+    \set{A} \times \set{B} &: \comment{A cartesian product of two sets}\\
+    f_1 : \set{A} \to \set{B} &: \comment{A mapping function}\\
+    f_2 : \set{A}^* \times \set{B} \to \set{C} &: \comment{Another mapping function}\\
+    f_3 : \set{A} \times \set{B} \to \mathcal{P}(\set{C}) &: \comment{$f_3$ maps to the \emph{powerset} of $\set{C}$}\\
+    \nonumber
+\end{flalign*}
+\end{subequation}
+
+Note that elements in a set are always unique, e.g., $\{a, b, c\}$, and unordered.  Elements in a sequence are ordered, and not necessarily unique, e.g., $(1, 1, 5, 2, 2, 2, 0)$.
+
+\EXAM{
+    Let $\set{A} = \{ a_1, a_2, a_3, a_4, a_5 \}$, then the following statements are all true:
+    \begin{enumerate}
+        \item $a_3 \in \set{A}$
+        \item $a_2, a_5 \in \set{A}$
+        \item $\{ a_2, a_5 \} \in \mathcal{P}(\set{A})$
+        \item $a_2 \ccat a_1 \ccat a_1 \ccat a_5 \in \set{A}^*$
+    \end{enumerate}
+}
+
+\section{Relations and Operators}
+An {\em operator} is some function which takes one or more arguments, and returns another argument of the same type, for example $+$, $-$, $*$, and $/$ are all {\em binary operators}, and $!$ is a unary operator.
+
+A {\em relation} can be thought of as an operator, with the exception that the return is always a boolean.  For example, $>$ is a {\em binary relation} on $\set{R}$.  The formal notation on relations follows.
+
+To say that $~ \in \set{R} \times \set{R}$ tells that $~$ is a binary relation operating on the set of real numbers $\set{R}$.  It would be equally correct to say that $~$ is a relation that operates on $\set{R} \times \set{R}$.
+
+\subsection{Equivalence Relation}
+In mathematics, an equivalence relation is, loosely, a relation that specifies how to partition a set such that every element of the set is in exactly one of the partitions and the union of all the partitions equals the original set. Two elements of the set are considered equivalent (with respect to the equivalence relation) if and only if they are elements of the same partition.
+
+\DEFN{Equivalence Relations}{
+    Any relation defined by $s \sim t$ is an \emph{equivalence relation} if $f(s) = f(t)$, for some function $f$.\\
+
+    \label{def2}All equivalence relations are binary relations.  Saying that $\sim$ is a \emph{relation} on $\set{A} \times \set{A}$, implies that $\sim$ is a \emph{binary relation} on $\set{A}$, and saying $\sim$ is an \emph{equivalence relation} on $\set{A}$, implies that $\sim$ is a \emph{binary relation}.\\
+
+    Finally, all equivalence relations are by definition \emph{transitive}, \emph{reflexive}, and \emph{symmetric}.\\
+}
+
+An equivalence relation partitions a set into several \emph{disjoint subsets}, called \emph{equivalence classes}. All elements in a given equivalence class are equivalent among themselves, and no element is equivalent with any element from a different class.
+
+\ANGY{
+    The binary relation/operator $\sim$, coupled with a given set, is an equivalence relation in the following examples:
+\begin{subequation}[arabic]
+\begin{flalign}
+    (\sim_p, \set{P}) &= \mbox{(``has the same first-name as'', ``all people'')}\\
+    (\sim_t, \set{T}) &= \mbox{(``is congruent to'', ``all triangles'')}\\
+    (\sim_i, \set{I}) &= \mbox{(``is congruent to modulo n'', ``all integers'')}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagebreak
+\subsection{Reflexive Relations}
+In mathematics, a \emph{reflexive} relation is a binary relation on a set for which every element is related to itself.  In more concrete terms, a binsry relation $\sim$ is said to be reflexive on the set $\set{A}$ $\Iff$ $s \sim s$ holds true $\forall$ s $\in$ $\set{A}$.
+
+\textbf{Analogy} - The following analogies and examples will drive this definition home:
+
+\begin{tabular}{ clc }
+    \hline
+    Relation & Comment & Reflexivty \\
+    \hline
+    $\subseteq$ & subset & True \\
+    $\subset$ & strict subset & False \\
+    $=$ & equality & True \\
+    $\neq$ & inequality & False \\
+    $\leq$ & & True \\
+    $<$ & & False \\
+    $\geq$ & & True \\
+    $>$ & & False \\
+    $/$ & divides & True \\
+    \hline
+\end{tabular}
+
+\subsection{Symmetric Relations}
+
+A binary relation $\sim$ over the set $\set{A}$ is symmetric, only if the following holds true:
+\begin{subequation}[arabic]
+\begin{flalign}
+    \Iff \forall (s, t) \in \set{A} : s \sim t \Rightarrow t \sim s
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+\begin{tabular}{ | c | l | c | }
+    \hline
+    Relation & Symmetric \\
+    \hline
+    is father to & False \\
+    is bother to & False (True if all male siblings)\\
+    is sibling to & True \\
+    is cousin to & True \\
+    is unisex to & True \\
+    \hline
+\end{tabular}
+
+\subsection{Transitive Relations}
+In mathematics, a binary relation $\sim$ over a set $\set{A}$ is transitive if whenever an element $a$ is related to an element $b$, and $b$ is in turn related to an element $c$, then it is also true $a$ is also related to $c$.
+
+\begin{tabular}{ | c | c | l | }
+    \hline
+    Relation & Transitivity & Comments \\
+    \hline
+    $\subseteq$ & True & \\
+    $=$ & True & \\
+    is mother to & False & This is in fact \emph{antitransitive}\footnotemark\\
+    \hline
+\end{tabular}
+\footnotetext{
+    If $a$ is the mother of $b$, and $b$ is the mother of $c$, then $a$ is 1) not always the mother of $c$ (not transitive), and 2) cannot ever be the mother of $c$ (antitransitive).
+}
+
+Transitivity is a key property of both \emph{partial order relations} and \emph{equivalence relations}.
+
+\subsection{Partial Order Relation}
+A partial order relation is a binary relation ``$\leq$'' that is reflexive, antisymmetric, and transitive.  More formally:
+\begin{subequation}[arabic]
+\begin{flalign}
+     a \leq a : \text(reflexivivity)\\
+     \mbox{if } a \leq b
+        \mbox{ and } b \leq a
+        \mbox{ then } a = b : \text(antisymmetry)\\
+     \mbox{if } a \leq b
+        \mbox{ and } b \leq c
+        \mbox{ then } a \leq c : \text(transitivity)\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+In other words, a partial order is an \emph{antisymmetric preorder} ($\sim$ is a preorder (or AKA quasiorder) if it is reflexive and transitive).
+
+\subsection{Domain-Codomain Mappings}
+In any given mapping/function, each and every element in the domain, must map to exactly 1 element in the co-domain.
+
+
+\includegraphics[width=32pc]{domcodom.pdf}
+
+\subsubsection{Injective}
+Every element in the codomain is mapped-to by at most one element from the domain.
+
+\subsubsection{Bijective}
+Every element in the codomain is mapped-to by exactly one element from the domain.
+
+\subsubsection{Surjective}
+Every element in the codomain is mapped-to by at least one element from the domain.
+
+\pagebreak
+\section{Infix Notation}
+
+\subsection{Binary Operators}
+
+\DSMB{A binary operator is a function that maps from the cartesian product of a set with itself, to another item of that set, i.e.  $\set{D} \times \set{D} \to \set{D}$.  On the other hand, a binary relation is one that simply relates a pair of elements $\in \set{D} \times \set{D}$ in some way.}
+
+Firstly, it helps to realize that the cartesian cross product of the infinite set of real numbers $\set{N}$ by itself, is an element of a given binary operator that operates on two numbers, for example:
+\begin{subequation}[arabic]
+\begin{flalign}
+     (s, t) \in \leq \forall (s, t) \in \set{N} \times \set{N}\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+This can be applied to all binary operators:
+
+\begin{subequation}[arabic]
+\begin{flalign}
+    s + t &\mbox{ is the \emph{infix} notation for } (s, t) \in +''\\
+    s \leq t &\mbox{ is the \emph{infix} notation for } (s, t) \in \leq''\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+\subsection{Ternery Operators}
+\begin{subequation}[arabic]
+\begin{flalign}
+    (x, y, z) \in &\Sigma \mbox{ if } z = x + y\\
+    (x, y, z) \in &\veebar \mbox{ if } z = x \veebar y\\
+    \nonumber
+\end{flalign}
+\end{subequation}
+
+\section{Closure}
+%http://en.wikipedia.org/wiki/Closure_(mathematics)
+In mathematics, a set is said to be closed under some operation if performance of that operation on members of the set always produces a member of the set. For example, the real numbers are closed under subtraction, but the natural numbers are not: 3 and 7 are both natural numbers, but the result of 3 − 7 is not.
+
+Similarly, a set is said to be closed under a collection of operations if it is closed under each of the operations individually.
+
+A set that is closed under an operation or collection of operations is said to satisfy a closure property. Often a closure property is introduced as an axiom, which is then usually called the axiom of closure. Note that modern set-theoretic definitions usually define operations as maps between sets, so adding closure to a structure as an axiom is superfluous, though it still makes sense to ask whether subsets are closed. For example, the set of real numbers is closed under subtraction, where (as mentioned above) its subset of natural numbers is not.
+
+When a set S is not closed under some operations, one can usually find the smallest set containing S that is closed. This smallest closed set is called the closure of S (with respect to these operations). For example, the closure under subtraction of the set of natural numbers, viewed as a subset of the real numbers, is the set of integers. An important example is that of topological closure. The notion of closure is generalized by Galois connection, and further by monads.
+
+Note that the set S must be a subset of a closed set in order for the closure operator to be defined. In the preceding example, it is important that the reals are closed under subtraction; in the domain of the natural numbers subtraction is not always defined.
+
+The two uses of the word "closure" should not be confused. The former usage refers to the property of being closed, and the latter refers to the smallest closed set containing one that isn't closed. In short, the closure of a set satisfies a closure property.
+
+\section{Kleen and Closure}
+In mathematical logic and computer science, the Kleene star (or Kleene operator or Kleene closure) is a unary operation, either on sets of strings or on sets of symbols or characters.  The application of the Kleene star to a set $\set{A}$ is written as $\set{A}^*$.  It is widely used for regular expressions, which is the context in which it was introduced by Stephen Kleene to characterise certain automata.
+
+
+
+%-------------------------------------------------------------------------------
+\input{footer}

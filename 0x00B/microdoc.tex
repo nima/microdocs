@@ -1,0 +1,292 @@
+%!TEX TS-program = XeLaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x00B}
+\newcommand{\theVersion}{0.4}
+\newcommand{\theTitle}{The Lagrangian/Wolfe Dual)}
+\newcommand{\theKeywords}{lagrange, lagrange multipliers, mathematics, optimization, objective function, cost function, linear constraints, kkt conditions of optimality, kkt complementarity condition, primal optimization problem, dual optimization problem, primal variable, dual variable}
+\newcommand{\theAbstract}{In optimization theory, deriving the dual of an optimization problem often yields a new insight into the optimization problem at hand.  These new insights can lead to new techniques for solving the optimization problem.  A particularly convenient technique to derive the dual of an optimization is the {\em Lagrangian dual}, also known as the {\em Wolfe dual}. \cite{Hay98}}
+
+\input{header}
+%-------------------------------------------------------------------------------
+
+By the way, here's a good way to put when you can use lagrange: When you want to minimize N variables subject to a constraint that has N variables = a constant
+
+\section{Notation}
+\begin{flalign*}
+    \set{Z}^+
+        &: \comment{infinite set of all positive integers}\\
+    \set{R}
+        &: \comment{infinite set of all real numbers}\\
+    \set{R}^2 = \set{R} \times \set{R}
+        &: \comment{2-dimentional coordinate system}\\
+    \set{R}^3 = \set{R} \times \set{R} \times \set{R}
+        &: \comment{3-dimentional coordinate system}\\
+    \set{R}^N
+        &: \comment{$N$-dimentional coordinate system}\\
+    \vect{x} \in \set{R}^N
+        &: \comment{primal variable, vector (of size $N$) of parameters}\\
+    \ovect{x} \in \set{R}^N
+        &: \comment{optimal primal variable}\\
+    l \in \set{Z}
+        &: \comment{number of constraints}\\
+    \varsigma_i
+        &: \comment{$i^{th}$ constraint function}\\
+    \Phi
+        &: \comment{objective function that is to be minimized}\\
+    \Lambda
+        &: \comment{the Lagrangian optimization problem}\\
+    \lambda_i
+        &: \comment{$i^{th}$ Lagrange multiplier}\\
+    \vect{\lambda} \in \set{R}^N
+        &: \comment{dual variable, vector (of size $N$) of Lagrangian multipliers}\\
+    \ovect{\lambda} \in \set{R}^N
+        &: \comment{optimal dual variable}\\
+    \Phi'
+        &: \comment{the Lagrangian dual}\\
+    \mathfrak{b} \in \{ -1, +1 \}
+        &: \comment{optional sign variable}
+\end{flalign*}
+
+\section{The Primal Optimization Problem}
+Suppose we have an optimization problem of the following form:
+\begin{flalign}
+    \min_{\vect{x}}\Phi(\vect{x})
+    \mbox{ where } \vect{x} \in \set{R}^N
+    \label{eq:primal}
+\end{flalign}
+
+Finding minimas (or maximas) of such a function is a simple case of taking the derivative of the objective function with respect to the primal variable $\vect{x}$, equate that to zero, and solve for $\vect{x}$.
+
+Now suppose we introduce a set of constraints:
+\begin{flalign}
+    \varsigma_i(\vect{x}) \geq 0
+    \mbox{ where } i \in \set{Z}^+
+    \label{eq:primalconst}
+\end{flalign}
+
+These constraints would impose the consequence of rendering some subset of the solutions from the unconstraint problem, into infeasable space.
+
+To deal with such constraints, we turn to the Lagrangian, and we note that formulation of the optimization problem $\Phi$ is known as the {\em primal optimization problem}.
+
+\section{The Lagrangian Optimization Problem}
+In order solve the constrained primal optimization problem, we must first construct a {\it new} optimization problem that is based on the original primal problem; we call this the {\em Lagrangian optimization problem}, and defined as follows:
+\begin{flalign}
+    \max_{\vect{\lambda}}\min_{\vect{x}}\Lambda(\vect{\lambda}, \vect{x})
+        &= \max_{\vect{\lambda}}\min_{\vect{x}}\left(
+            \Phi(\vect{x}) - \mathfrak{b}
+                \cdot \sum_{i=0}^l\lambda_i
+                \cdot \varsigma_i(\vect{x})
+        \right)\label{eq:maxmin}
+\end{flalign}
+
+such that:
+\begin{flalign}
+    \mathfrak{b} \cdot \lambda_i \geq 0\label{eq:lagrangeconst}
+\end{flalign}
+
+This new objective function $\Lambda$ is called the Lagrangian and incorporates the original function $\Phi$ together with a linear combination of constraints $\varsigma_i$.  The condition defined in\eqref{eq:lagrangeconst} ensures that the solution lies in the feasable solution space.
+
+The signum variable $\mathfrak{b}$ here is generally set to $+1$ by convention, however we will retain it in variable form so that its implication in other areas is explicit.
+
+The new optimization problem has an unusual feature of two nested optimization operators of opposing optimization objectives.  Despite the unfriendly feel of the equation however, the process is simple and straight-forward: we partially solve the problem with respect to one of the variables, and then we partially solve it with respect to the other; that is two separate and independent sub-steps:
+
+That is, we can partially solve for the primal variable:
+\begin{flalign}
+    \min_{\vect{x}}\Lambda(\ovect{\lambda}, \vect{x})
+        &= \min_{\vect{x}}\left(
+            \Phi(\vect{x}) - \mathfrak{b}
+                \cdot \sum_{i=0}^l\opt{\lambda_i}
+                \cdot \varsigma_i(\vect{x})
+        \right)\label{eq:partial1}
+\end{flalign}
+
+Coversely, we can solve for the dual variable:
+\begin{flalign}
+    \max_{\vect{\lambda}}\Lambda(\vect{\lambda}, \ovect{x})
+        &= \max_{\vect{\lambda}}\left(
+            \Phi(\ovect{x}) - \mathfrak{b}
+                \cdot \sum_{i=0}^l\lambda_i
+                \cdot \varsigma_i(\ovect{x})
+        \right)\label{eq:partial2}
+\end{flalign}
+
+Essentially, this becomes a system of two equations -\eqref{eq:partial1} and \eqref{eq:partial2} - and two unknowns - $\ovect{x}$ and $\ovect{\lambda}$, the primal and dual variables respectively.
+
+\section{Lagrangian Solutions}
+Solutions to the Lagrangian optimization\eqref{eq:maxmin} are points that both minimize the function $\Lambda(\vect{\lambda}, \vect{x})$ with respect to the primal variable $\vect{x}$, and maximize it with respect to the dual variable $\vect{\lambda}$.  This implies that the solutions are {\em saddle points} on the surface defined by $\Lambda(\vect{\lambda}, \vect{x})$ in the Euclidean space $\set{R}^N$.
+
+\subsection{Assumptions for a Single Saddle}
+However, we now introduce two assumptions, that will reduce the cardinality of solutions to unity:
+\begin{flalign}
+    &\mbox{
+        Assume that the objective function $\Phi$ is {\em convex} in $\vect{x}$
+    }\label{eq:ass1}\\
+    &\mbox{
+        Assume that the constraints $\varsigma_i$ are {\em linear}\footnotemark in $\vect{x}$
+    }\label{eq:ass2}
+\end{flalign}
+\footnotetext{Linear constraints are constraints that form lines in $\set{R}^2$, planes in $\set{R}^3$, or generally, hyperplanes in $\set{R}^N$.}
+
+If we can make these two assumptions, then we have succeeded in reducing the number of solutions to one; a unique solution represented by a unique saddle point.  At this point, $\Lambda$ will be minimal with respect to $\vect{x}$ and hence the partial derivative of $\Lambda$ with respect to $\vect{x}$ at this point will be zero:
+\begin{flalign}
+    \frac{\partial\Lambda}{\partial\vect{x}}(\vect{\lambda}, \ovect{x})
+        &= \vect{0}\label{eq:partialx}
+\end{flalign}
+
+\subsection{Karush-Kuhn-Tucker Conditions of Optimality}
+An interesting and attractive property of Lagrangian optimization is that under certain conditions - known as the {\em $KKT$ conditions of optimality}, a solution to the Lagrangian is also a solution to the primal optimization problem.
+
+Under the assumptions made in\eqref{eq:ass1} and\eqref{eq:ass2}, we can rewrite\eqref{eq:maxmin} as follows:
+\begin{flalign}
+    \max_{\vect{\lambda}}\min_{\vect{x}}\Lambda(\vect{\lambda}, \vect{x})
+        &= \Lambda(\ovect{\lambda}, \ovect{x})\nonumber\\
+    \therefore\max_{\vect{\lambda}}\min_{\vect{x}}\left(
+        \Phi(\vect{x}) - \mathfrak{b}
+            \cdot \sum_{i=0}^l\lambda_i
+            \cdot \varsigma_i(\vect{x})
+    \right)
+        &= \Phi(\ovect{x}) - \mathfrak{b}
+            \cdot \sum_{i=0}^l\opt{\lambda_i}
+            \cdot \varsigma_i(\ovect{x})\label{eq:optminmax}
+\end{flalign}
+
+Here, $\ovect{x}$ is the solution to the primal objective function if and only if all $KKT$ conditions hold.
+
+We now define the four $KKT$ conditions:
+\begin{flalign}
+    \frac{\partial\Lambda}{\partial\vect{x}}(\ovect{\lambda}, \ovect{x})
+        &= \vect{0}\label{eq:kkt1}\\
+    \opt{\lambda_i} \cdot \varsigma_i(\ovect{x})
+        &= 0 \mbox{ where } i \in \set{Z}^+\label{eq:kkt2}\\
+    \varsigma_i(\ovect{x})
+        &\geq 0 \mbox{ where } i \in \set{Z}^+\label{eq:kkt3}\\
+    \mathfrak{b} \cdot \opt{\lambda_i}
+        &\geq 0 \mbox{ where } i \in \set{Z}^+\label{eq:kkt4}
+\end{flalign}
+
+Due to its singular importance\eqref{eq:kkt2} is often referred to as the {\em KKT complementarity condition}; it states that every constraint $\varsigma_i$ evaluated at $\ovect{x}$ and multiplied by its corresponding Lagrange multiplier $\opt{\lambda_i}$ must equate to zero.
+
+EMAIL LUTZ
+
+The other three $KKT$ conditions are straight-forward; the fact that the solution must exist at the saddle point is the implication of\eqref{eq:kkt1}, while\eqref{eq:kkt3} and\eqref{eq:kkt4} are the original constraints of the primal\eqref{eq:primalconst} and Lagrangian\eqref{eq:lagrangeconst} optimization problems respectively; they ensure that the points $\ovect{x}$ and $\ovect{\lambda}$ lie on the respective feasable regions.
+
+\section{The (Lagrangian) Dual Optimization Problem}
+Under the assumptions made in\eqref{eq:ass1} and\eqref{eq:ass2}, the Lagrange optimization problem can be simplified by virtue of the fact that there exists a unique solution to $\ovect{x}$, and that it lies on the saddle point of the Lagrangian.  Solving\eqref{eq:partialx} for $\ovect{x}$ will enable us to reformulate the original optimization problem in terms of only its dual variable, $\Lambda(\vect{\lambda}, \vect{x}) = \Phi'(\ovect{\lambda})$.  We can then solve for the optimum with respect to the dual variable as the following Lagrangian optimization:
+\begin{flalign}
+    \max_{\vect{\lambda}}\Phi'(\vect{\lambda})\label{eq:dual}
+\end{flalign}
+
+subject to \eqref{eq:kkt4}.  We call $\Phi'$ the {\em Lagrangian dual}, or the {\em Wolfe dual}.  This means that we can solve the primal optimization problem, using the Lagrangian dual:
+\begin{flalign*}
+    \max_{\vect{\lambda}}\Phi'(\vect{\lambda})
+        &= \Phi'(\ovect{\lambda})\\
+        &= \Lambda(\ovect{\lambda}, \ovect{x})\\
+        &= \Phi(\ovect{x})
+\end{flalign*}
+
+where $\ovect{x}$ and $\ovect{\lambda}$ must satisfy the four $KKT$ conditions of optimality.
+
+\section{Concrete Example}
+\subsection{Problem Definition}
+Minimize $\Phi(x) = x^2 + 3x + 1$ under the constraint that $2x + 2 \geq 0$.
+
+\subsection{Worked Solution}
+We first refine the problem into a mathematically tractible form;  giving us the {\em objective function}\footnote{also known as the {\em cost function}}:
+\begin{flalign}
+    \min_x\Phi(x) &= \min_x(x^2 + 3x + 1)\label{eq:obj}
+\end{flalign}
+
+under the linear constraint $\varsigma(x)$:
+\begin{flalign}
+    \varsigma(x) &= 2x + 2 \geq 0\label{eq:const}
+\end{flalign}
+
+Since the objective function is convex, and the constraint linear, we know that we can derive the solution using the Lagrangian.
+
+We let $\mathfrak{b} = -1$ arbitrarily, and construct the Lagrangian from\eqref{eq:obj} and\eqref{eq:const} as follows:
+\begin{flalign}
+    \Lambda(\lambda, x)
+        &= \Phi(x) - \mathfrak{b} \cdot \lambda \cdot \varsigma(x)\nonumber\\
+        &= (x^2 + 3x + 1) + \lambda \cdot (2x + 2)\nonumber\\
+        &= x^2 + (2\lambda + 3)x + (2\lambda + 1)\label{eq:lagrangian}
+\end{flalign}
+where $\lambda$ is a {\em Lagrangian multiplier}.
+
+Equation\eqref{eq:lagrangian} will create a {\em saddle} in Euclidian space, which necessarily means that there exists a unique {\em saddle point}, this is the point we next have to find.
+
+We take the derivative of\eqref{eq:lagrangian} with respect to $x$, and solve for the optimal value of $x$, $\opt{x}$, by equating to zero:
+\begin{flalign}
+    \frac{\partial\Lambda(\lambda, \opt{x})}{\partial x}
+        &= 2\opt{x} + 2\lambda + 3 = 0\nonumber\\
+    \therefore \opt{x}
+        &= -\frac{2\lambda + 3}{2}\label{eq:xopt}
+\end{flalign}
+
+We now plug\eqref{eq:xopt} back into \eqref{eq:lagrangian} to solve for $\opt{\lambda}$:
+\begin{flalign}
+    \Lambda(\opt{\lambda}, \opt{x})
+        &= \opt{x}^2
+            + (2\opt{\lambda} + 3)\opt{x}
+            + (2\opt{\lambda} + 1)\nonumber\\
+        &= \left(-\frac{2\opt{\lambda} + 3}{2}\right)^2
+            + (2\opt{\lambda} + 3)\left(-\frac{2\opt{\lambda} + 3}{2}\right)
+            + (2\opt{\lambda} + 1)\nonumber\\
+        &= \sfrac{1}{4}(2\opt{\lambda} + 3)^2
+            - \sfrac{1}{2}(2\opt{\lambda} + 3)^2
+            + (2\opt{\lambda} + 1)\nonumber\\
+        &= -\sfrac{1}{4}(2\opt{\lambda} + 3)^2
+            + (2\opt{\lambda} + 1)\nonumber\\
+        &= -\sfrac{1}{4}(4\opt{\lambda}^2 + 12\opt{\lambda} + 9)
+            + (2\opt{\lambda} + 1)\nonumber\\
+        &= - \opt{\lambda}^2 - 3\opt{\lambda} - 2\sfrac{1}{4}
+            + 2\opt{\lambda} + 1\nonumber\\
+        &= - \opt{\lambda}^2 - \opt{\lambda} - 1\sfrac{1}{4}
+\end{flalign}
+
+Notice now that the Lagrangian no longer has a dependency on $x$, we can therefore write the Lagrangian dual as follows:
+
+\begin{flalign}
+    \max_\lambda\Phi'(\lambda)
+        &= \max_\lambda(- \lambda^2 - \lambda - 1\sfrac{1}{4})
+\end{flalign}
+
+subject to:
+\begin{flalign*}
+    \mathfrak{b} \cdot \lambda \geq 0
+\end{flalign*}
+
+Substituting $\mathfrak{b}$ we get:
+\begin{flalign}
+    -\lambda &\geq 0\nonumber\\
+    \therefore \lambda &\leq 0
+\end{flalign}
+
+We know that $\Lambda(\lambda, x)$ has a unique saddle point, and this implies that the function $\Phi'(\lambda) = \Lambda(\lambda, \opt{x})$ has a unique maximum.  This unique maximum must occur at the point where the partial derivative of the Lagrangian dual with respect to $\lambda$ is zero.  The value of $\lambda$ at this point will hence be the optimal Lagrangian dual variable $\opt{\lambda}$:
+
+\begin{flalign}
+    \frac{\partial\Lambda(\opt{\lambda})}{\partial \lambda}
+        &= - 2\opt{\lambda} - 1 = 0\nonumber\\
+    \therefore \opt{\lambda}
+        &= -\sfrac{1}{2}\label{eq:lopt}
+\end{flalign}
+
+Now substituting this into\eqref{eq:xopt}, we get:
+\begin{flalign}
+    \opt{x}
+        &= -\frac{2\lambda + 3}{2}\nonumber\\
+        &= -\frac{2 \cdot -\sfrac{1}{2} + 3}{2}\nonumber\\
+        &= -1
+\end{flalign}
+
+Trivially, we can verify that this answer is correct, since the constraint will allow 
+
+\pagebreak
+Let $\Phi(x) = \frac{1}{2} \cdot x^2$, and therefore $\min\Phi(x) = \min \frac{1}{2} \cdot x^2$.  The constraint I proposed was $g(x) = x - 2 \leq 0$, and you pointed out that we need a form ``$\geq 0$'', to bring this new constraint into form then we get: $g(x) = 2 - x \geq 0$.  We're now ready to proceed.
+
+First, the Lagrangian of this problem: \[ \Lambda(x, \lambda) = \frac{1}{2} \cdot x^2 - \lambda \cdot (2 - x)\]  The partial derivative with respect to $x$ gives \[ \frac{\partial\Lambda}{\partial \opt{x}} = x + \lambda = 0 \] where $\opt{x}$ is the optimal value of the primal variable $x$; this gives \[ \opt{x} = -\lambda \] We now substitute this back into the Lagrangian to eliminate $x$ and get: \[ \Lambda(x, \lambda) = \frac{1}{2}(-\lambda)^2 - \lambda(2 - (-\lambda)) = -\frac{1}{2}\lambda^2 - 2\lambda \].  The partial derivative at the dual variable thus gives: \[ \frac{\partial\Lambda}{\partial \opt{\lambda}} = -\opt{\lambda} - 2 = 0 \], which gives $\lambda = -2$, thus $\opt{x} = 2$ - that's still wrong - as if it really were taking note of the inequality, the answer under the new constraint should trivially be 0, since 0 is now in the feasible region.
+
+
+%-------------------------------------------------------------------------------
+\input{footer}

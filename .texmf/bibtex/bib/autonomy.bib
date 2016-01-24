@@ -1,0 +1,529 @@
+%!TEX TS-program = BibTeX
+%!TEX encoding = UTF-8 Unicode
+%.
+%. See http://amath.colorado.edu/documentation/LaTeX/reference/faq/bibstyles.html
+%. article An article from a journal or magazine
+%. book A book with an explicit publisher
+%. booklet A work that is printed and bound, but without a named publisher or sponsoring institution
+%. conference The same as inproceedings
+%. inbook A part of a book, which may be a chapter (or section or whatever) and/or a range of pages
+%. incollection A part of a book having its own title
+%. inproceedings An article in a conference proceedings
+%. manual Technical documentation
+%. mastersthesis A Master's thesis
+%. misc Use this type when nothing else fits
+%. phdthesis A PhD thesis
+%. proceedings The proceedings of a conference
+%. techreport A report published by a school or other institution, usually numbered within a series
+%. unpublished A document having an author and title, but not formally published
+%. collection Not a standard entry type. Use proceedings instead.
+%. patent Not a standard entry type.
+
+@preamble{"This bibliography was generated on \today"}
+
+@string{ pubPEI      = "Pearson Education International" }
+@string{ locPEI      = "New Jersey" }
+
+@string{ pubMIT      = "\href{http://mitpress.mit.edu/0262193981}{MIT Press}" }
+@string{ locMIT      = "Cambridge, Massachusetts, USA" }
+
+@string{ pubPH       = "Prentice Hall" }
+@string{ locPH       = "Upper Saddle River, New Jersey" }
+
+@string{ authBarto   = "\href{http://www.umass.edu/neuro/faculty/files/barto.html}{Barto, Andrew G.}" }
+@string{ authHaykin  = "\href{http://www.ieee.org/portal/pages/about/awards/bios/2004gradtching.html}{Haykin, Simon}" }
+@string{ authLafore  = "Lafore, R." }
+@string{ authNorvig  = "\href{http://research.google.com/pubs/author205.html}{Norvig, Peter}" }
+@string{ authRussell = "\href{http://www.cs.berkeley.edu/~russell/}{Russell, Stuart}" }
+@string{ authSutton  = "\href{http://www.cs.ualberta.ca/~sutton/index.html}{Sutton, Richard S.}" }
+@string{ authTrun    = "Thrun, Sebastian" }
+@string{ authBurgard = "Burgard, Wolfram" }
+@string{ authFox     = "Fox, Dieter" }
+
+@string{ bookAIMA    = "\href{http://aima.cs.berkeley.edu/}{AIMA}" }
+@string{ bookRLI     = "\href{http://www.cs.ualberta.ca/\%7Esutton/book/ebook/the-book.html}{RLI}" }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@book{Ber96,
+  author = {Dimitri P. Bertsekas},
+  edition = {1},
+  publisher = {Athena Scientific},
+  title = {Constrained Optimization and Lagrange Multiplier Methods (Optimization and Neural Computation Series)},
+  url = {http://www.amazon.com/Constrained-Optimization-Lagrange-Multiplier-Computation/dp/1886529043%3FSubscriptionId%3D192BW6DQ43CK9FN0ZGG2%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D1886529043},
+  year = {1996},
+  ean = {9781886529045},
+  asin = {1886529043},
+  isbn = {1886529043}
+}
+
+@book{RN03,
+    title     = {Artificial Intelligence, A Modern Approach},
+    author    = authRussell #" and "# authNorvig,
+    publisher = pubPEI,
+    address   = locPEI,
+    edition   = {Second},
+    year      = 2003,
+}
+
+@book{SB02,
+    title     = {Reinforcement Learning, An Introduction},
+    author    = authSutton #" and "# authBarto,
+    publisher = pubMIT,
+    address   = locMIT,
+    year      = 2002,
+    isbn      = {0262193981},
+    url       = {http://portal.acm.org/citation.cfm?id=551283},
+    keywords  = {ai, ai-ml-rl},
+    citeulike-article-id = {6060271},
+}
+
+@book{TBF06,
+    title = {Probabilistic Robotics},
+    author = authTrun #" and "# authBurgard #" and "# authFox,
+    publisher = pubMIT,
+    address = locMIT,
+    year = {2006},
+    doi = {http://dx.doi.org/10.1017/S0269888906210993},
+    isbn = {0-262-20162-3},
+    issn = {0269-8889},
+}
+
+@book{Fog05,
+    title = {Producing Open Source Software: How to Run a Successful Free Software Project},
+    author = {Fogel, Karl},
+    publisher = {O'Reilly Media, Inc.},
+    howpublished = {Paperback},
+    year = {2005},
+    month = {October},
+    url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0596007590},
+    isbn = {0596007590},
+    keywords = {cs-sw, cse-sw, cse-sw-construction, cse-sw-projman},
+    citeulike-article-id = {478633},
+}
+
+@book{Ekm01,
+    title = {Telling Lies: Clues to Deceit in the Marketplace, Politics, and Marriage (Revised and Updated Edition)},
+    author = {Ekman, Paul},
+    publisher = {W. W. Norton \& Company},
+    year = {2001},
+    month = {September},
+    edition = {2nd},
+    howpublished = {Paperback},
+    url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0393321886},
+    isbn = {0393321886},
+    keywords = {psych},
+    citeulike-article-id = {3873681},
+}
+
+@book{Hay98,
+    title = {Neural Networks: A Comprehensive Foundation (2nd Edition)},
+    author = {Haykin, Simon},
+    publisher = {Prentice Hall},
+    year = {1998},
+    month = {July},
+    edition = {2nd},
+    howpublished = {Hardcover},
+    url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0132733501},
+    isbn = {0132733501},
+    keywords = {ai-ml},
+    citeulike-article-id = {368926},
+}
+
+@book{McC04,
+    title = {Code Complete: A Practical Handbook of Software Construction},
+    author = {McConnell, Steve},
+    publisher = {Microsoft Press},
+    year = {2004},
+    month = {July},
+    edition = {2nd},
+    howpublished = {Paperback},
+    url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0735619670},
+    isbn = {0735619670},
+    keywords = {cs-sw, cs-sw-prog, cse-sw, cse-sw-construction, cse-sw-projman},
+    citeulike-article-id = {205322},
+}
+
+@book{Ski08,
+    title = {The Algorithm Design Manual},
+    author = {Skiena, Steven S.},
+    publisher = {Springer},
+    year = {2008},
+    month = {August},
+    edition = {2nd},
+    howpublished = {Hardcover},
+    url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/1848000693},
+    isbn = {1848000693},
+    keywords = {cs-sw-prog},
+    citeulike-article-id = {3504584},
+}
+
+@book{SR05,
+    title = {Advanced Programming in the UNIX(R) Environment (2nd Edition) (Addison-Wesley Professional Computing Series)},
+    author = {Stevens, Richard W. and Rago, Stephen A.},
+    publisher = {Addison-Wesley Professional},
+    edition = {2nd},
+    year = {2005},
+    month = {June},
+    howpublished = {Hardcover},
+    url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0201433079},
+    isbn = {0201433079},
+    keywords = {cs-os, cs-os-unix, cs-sw-prog},
+    citeulike-article-id = {3379741},
+}
+
+@article{HLPSL,
+    title = {A Beginner's Guide to Modelling and Analysing Internet Security Protocols},
+    journal = {AVISPA eBooks},
+    author = {The AVISPA team},
+    year = 2006,
+    month = {June},
+    edition = {1.1},
+    url = {http://avispa-project.org/package/tutorial.pdf},
+    keywords = {hplsp, avispa, security},
+}
+
+@article{VC74,
+    author = {Vapnik, V. N. and A. Ya. Chervonenkis},
+    title = {Theory of Pattern Recognition},
+    year = 1974,
+    institution = {Nauka, Moscow},
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%. Security
+@manual{Cen09,
+    title = {Protocol of Lightweight Authentication of Identity.  PLAID Version 8.0 - FINAL},
+    journal = {Centrelink Specification},
+    author = {Centrelink},
+    year = 2009,
+    month = {December},
+    url = {http://www.google.com.au/url?sa=t&source=web&ct=res&cd=1&ved=0CAkQFjAA&url=https%3A%2F%2Fwww.govdex.gov.au%2Fconfluence%2Fdownload%2Fattachments%2F61931545%2FCentrelinkPLAID_Version8%2BDec09.pdf%3Fversion%3D1&ei=b5VGS9CgGY7i7AP0n5Fc&usg=AFQjCNGxGUcJTddnZd5TlDbVV1sqwZ2vVA&sig2=YBZxUi52Qw8W1xrXB3-6Jw},
+    keywords = {plaid, security, protocol, centrelink},
+}
+
+@article{BAN90,
+    author = {Burrows, Michael and Abadi, Martin and Needham, Roger},
+    journal = {ACM Transactions on Computer Systems},
+    title = {A Logic of Authentication},
+    volume = {8},
+    year = {1990},
+    url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.35.6628},
+    keywords = {logic, security},
+    citeulike-article-id = {4959676},
+}
+
+@article{VIS96,
+    author    = {Dennis M. Volpano and
+                Cynthia E. Irvine and
+                Geoffrey Smith},
+    title     = {A Sound Type System for Secure Flow Analysis},
+    journal   = {Journal of Computer Security},
+    volume    = {4},
+    number    = {2/3},
+    year      = {1996},
+    keywords  = {security},
+}
+@inproceedings{LS99,
+    author = {Shiyong Lu and Scott A. Smolka},
+    title = {Model Checking the Secure Electronic Transaction (SET) Protocol},
+    booktitle = {In Proceedings of 7 th International Symposium on Modeling, Analysis and Simulation of Computer and Telecommunication Systems},
+    year = {1999},
+    pages = {358--365},
+    publisher = {Press},
+    keywords  = {security},
+}
+@inproceedings{SY08,
+    author = {Sufatrio and Yap, Roland H. C.},
+    title = {Extending BAN Logic for Reasoning with Modern PKI-Based Protocols},
+    booktitle = {NPC '08: Proceedings of the 2008 IFIP International Conference on Network and Parallel Computing},
+    year = {2008},
+    pages = {190--197},
+    publisher = {IEEE Computer Society},
+    address = {Washington, DC, USA},
+    isbn = {978-0-7695-3354-4},
+    keywords  = {security},
+}
+@inproceedings{vdM07,
+    author = {van der Meyden, Ron},
+    title = {What, Indeed, is Intransitive Noninterference?},
+    booktitle = {Computer Security - ESORICS 2007: 12th European Symposium On Research In Computer Security, Dresden, Germany, September 24 - 26, 2007, Proceedings (Lecture ... Computer Science / Security and Cryptology) by Joachim Biskup and Javier Lopez (Paperback - Oct 23, 2007)},
+    year      = {2007},
+    month     = {September},
+    pages     = {235-250},
+    abstract  = {
+        This paper argues that Haigh and Young’s definition of non-interference
+        for intransitive security policies admits information flows that are not
+        in accordance with the intuitions it seeks to formalise. Several
+        alternative definitions are discussed, which are shown to be equivalent
+        to the classical definition of noninterference with respect to
+        transitive policies.  Rushby's unwinding conditions for intransitive
+        noninterference are shown to be sound and complete for one of these
+        definitions, TA-security.  Access control systems compatible with a
+        policy are shown to be TA-secure, and it is also shown that TA-security
+        implies that the system can be interpreted as an access control system.
+    },
+    keywords  = {security},
+}
+@inproceedings{Sny77,
+    author = {Lawrence Snyder},
+    title = {On the Synthesis and Analysis of Protection Systems},
+    booktitle = {Proceedings of Sixth ACM Symposium on Operating System Principals},
+    year = {1977},
+    month = {November},
+    pages = {144-150},
+    abstract = {
+        The design of a protection system for an oper- ating system is seen to
+        involve satisfying the com- peting properties of richness and integrity.
+        Achieving both requires the interplay of analysis and synthesis. Using a
+        formal model from the lit- erature, three designs are developed whose
+        integ- rity (with the help of the model) can be shown.
+    },
+    keywords  = {security},
+}
+@inproceedings{Sny81,
+    author = {Lawrence Snyder},
+    title = {Formal Models of Capabilitiy-Based Protection Systems},
+    booktitle = {IEEE Transactions on Computers},
+    volume = {c-30},
+    number = {3},
+    year = {1981},
+    month = {March},
+    pages = {144-150},
+    keywords  = {security},
+}
+@inproceedings{GM82,
+    author = {Joseph A. Goguen and Jos'e Meseguer},
+    booktitle = {Proceedings of the 1982 IEEE Symposium on Security and Privacy},
+    publisher = {IEEE Computer Society},
+    title = {Security Policies and Security Models},
+    year = {1982},
+    month = {April},
+    pages = {11--20},
+    keywords = {information-flow, noninterference, security},
+}
+
+@inproceedings{GM84,
+  author    = {Joseph A. Goguen and Jos'e Meseguer},
+  title     = {Unwinding and Inference Control},
+  booktitle = {IEEE Symposium on Security and Privacy},
+  year      = {1984},
+  pages     = {75-87},
+}
+
+@inproceedings{DD77,
+    author = {Peter J. Denning and Dorothy E. Denning},
+    title = {Certification of Programs for Secure Information Flow},
+    booktitle = {Communications of the ACM},
+    volume = {20},
+    number = {7},
+    year = {1977},
+    month = {July},
+    pages = {504-513},
+    keywords  = {security},
+}
+@article{HY87,
+    abstract = {
+        A noninterference formulation of MLS applicable to the Secure Ada Target
+        (SAT) Abstract Model is developed. An analogous formulation is developed
+        to handle the SAT type enforcement policy. Unwinding theorems are
+        presented for both MLS and Multidomain Security (MDS) and the SAT
+        Abstract Model is shown to satisfy both MLS and MDS. Generalizations and
+        extensions are also considered.
+    },
+    annote = {Proposes intransitive noninterference.},
+    author = {Thomas J. Haigh and William D. Young},
+    title = {Extending the Noninterference Version of {MLS} for {SAT}},
+    journal = {{IEEE} Transactions on Software Engineering},
+    number = {2},
+    publisher = {IEEE Press},
+    pages = {141--150},
+    volume = {13},
+    year = {1987},
+    month = {February},
+    keywords = {ada, multi-level, noninterference, unwinding},
+}
+@inproceedings{SM03,
+    author = {Andrei Sabefeld and Andrew C. Myers},
+    title = {Language-Based Information-Flow Security},
+    booktitle = {IEEE Journal of Selected Areas in Communications},
+    volume = {21},
+    number = {1},
+    year = {2003},
+    month = {January},
+    pages = {1-15},
+    keywords  = {security},
+}
+@inproceedings{LS77,
+    author = {R. J. Lipton and Lawrence Snyder},
+    title = {A Linear-Time Algorithm for Deciding Subject Security},
+    booktitle = {Journal of the Associations for Computing Machinery},
+    volume = {24},
+    number = {3},
+    year = {1977},
+    month = {July},
+    pages = {455-464},
+    keywords  = {security},
+}
+@inproceedings{Koc99,
+    author = {Paul C. Kocher},
+    title = {Timing Attacks on Implementations of Diffie-Hellman, RSA, DSS, and Other Systems},
+    booktitle = {Advanced Cyptology},
+    year = {1999},
+    pages = {104-113},
+    keywords  = {security},
+}
+@inproceedings{HRU76,
+    author = {Michael A. Harrison and Walter L. Ruzzo and Jeffery D. Ulderman},
+    title = {Protection in Operating Systems},
+    booktitle = {Communications of the ACM},
+    volume = {19},
+    number = {8},
+    year = {1976},
+    month = {August},
+    pages = {461-471},
+    keywords  = {security},
+}
+@book{BL76,
+    author = {D. E. Bell and L. J. La Padula},
+    title = {Secure Computer Systems: Unified Exposition and Multics Interpretation},
+    publisher = {Air Forces Systems Command, United States Air Force, Electronic Systems Division},
+    year = {1976},
+    month = {March},
+    pages = {129},
+    keywords  = {asterisk-property, mathematical-models, secure-computer-systems, security, trusted-subject},
+}
+
+@techreport{Rus92,
+    author = {John Rushby},
+    title = {Noninterference, Transitivity, and Channel-Control Security Policies},
+    year = {1992},
+    month = {December},
+    institution = {Unknown},
+    booktitle = {Technical Report {CSL-92-02}},
+    url = {http://www.csl.sri.com/papers/csl-92-2/},
+}
+
+@misc{PP08,
+    author       = {K. B. Petersen and M. S. Pedersen},
+    title        = {The Matrix Cookbook},
+    year         = {2008},
+    month        = {October},
+    publisher    = {Technical University of Denmark},
+    address      = {},
+    note         = {Version 20081110},
+    abstract     = {Matrix identities, relations and approximations. A desktop reference for quick overview of mathematics of matrices.},
+    keywords     = {matrix identity, matrix relations, inverse, matrix derivative},
+    url          = {http://www2.imm.dtu.dk/pubdb/p.php?3274},
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%. Microdocs
+@unpublished{MD001,
+    author    = {Nima Talebi},
+    title     = {Set Theory},
+    note      = {Basics of set theory notation and laws},
+    journal   = {Microdocs Journal 0x001},
+    volume    = {1},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD002,
+    author    = {Nima Talebi},
+    title     = {Transitive and Intransitive Noninterference},
+    note      = {Work based on material presented by Professor Ron van der Meyden on the topic},
+    journal   = {Microdocs Journal 0x002},
+    volume    = {2},
+    year      = {2010},
+    keywords  = {mathematics, security},
+}
+@unpublished{MD003,
+    author    = {Nima Talebi},
+    title     = {Static Program Analysis},
+    note      = {Work based on material presented by Professor Ron van der Meyden on the topic},
+    journal   = {Microdocs Journal 0x003},
+    volume    = {3},
+    year      = {2010},
+    keywords  = {mathematics, security},
+}
+@unpublished{MD004,
+    author    = {Nima Talebi},
+    title     = {Transitive Noninterference Tutorial},
+    note      = {},
+    journal   = {Microdocs Journal 0x004},
+    volume    = {3},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD005,
+    author    = {Nima Talebi},
+    title     = {Linux Applications and Services Policy},
+    note      = {},
+    journal   = {Microdocs Journal 0x005},
+    volume    = {3},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD006,
+    author    = {Nima Talebi},
+    title     = {Number Theory},
+    note      = {},
+    journal   = {Microdocs Journal 0x006},
+    volume    = {3},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD007,
+    author    = {Nima Talebi},
+    title     = {Support Vector Machines},
+    note      = {},
+    journal   = {Microdocs Journal 0x007},
+    volume    = {3},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD008,
+    author    = {Nima Talebi},
+    title     = {Structural Risk Minimization},
+    note      = {},
+    journal   = {Microdocs Journal 0x008},
+    volume    = {8},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD009,
+    author    = {Nima Talebi},
+    title     = {Classes of Mathematical Results},
+    note      = {},
+    journal   = {Microdocs Journal 0x009},
+    volume    = {9},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD00A,
+    author    = {Nima Talebi},
+    title     = {VC-Dimension Tutorial},
+    note      = {},
+    journal   = {Microdocs Journal 0x00A},
+    volume    = {A},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD00B,
+    author    = {Nima Talebi},
+    title     = {The Lagrangian Dual},
+    note      = {},
+    journal   = {Microdocs Journal 0x00B},
+    volume    = {B},
+    year      = {2010},
+    keywords  = {mathematics},
+}
+@unpublished{MD00C,
+    author    = {Nima Talebi},
+    title     = {The Karush-Kuhn-Tucker Conditions of Optimality},
+    note      = {},
+    journal   = {Microdocs Journal 0x00C},
+    volume    = {C},
+    year      = {2010},
+    keywords  = {mathematics},
+}

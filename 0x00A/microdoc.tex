@@ -1,0 +1,60 @@
+%!TEX TS-program = XeLaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x008}
+\newcommand{\theVersion}{0.1}
+\newcommand{\theTitle}{VC-Dimension, A Tutorial}
+\newcommand{\theKeywords}{vc-dimension, statistical learning theory, computational learning theory, mathematics, machine-learning}
+\newcommand{\theAbstract}{
+    {\em Vapnik–Chervonenkis dimension}, or {\em VC dimension}, is a measure of capacity of a statistical classification hypothesis.  The VC-dimension of a system is thus defined as the cardinality of the largest set of points that the hypothesis can {\em shatter}.
+    It is a core concept in {\em Vapnik–Chervonenkis theory}, and was originally defined by Vladimir Vapnik and Alexey Chervonenkis.
+}
+
+\input{header}
+%-------------------------------------------------------------------------------
+
+\section{Applications}
+VC-dimension is applicable in the selection of the most suitable subset of hypothesis, given a number of $iid$ examples, and trading emperical risk against the confidence in estimation.  VC-dimension formed the foundation upon which SVM was invented.
+
+\section{Structural Risk Minimization}
+The complexity (or capacity) of a hypothesis class from which the learning machine $\lM$ chooses a hypothesis $h$ that minimises the empirical risk determines the convergence rate of the learner to the optimal hypothesis.  For a given number of $iid$ training examples, there is a trade-off between the degree to which the {\em empirical risk} can be minimised and to which the {\em empirical risk} will deviate from the {\em true risk}.
+
+Structural risk minimization\cite{VC74} is an inductive principle for model selection used for learning from finite training data sets. It describes a general model of capacity control and provides a trade-off between hypothesis space complexity (the VC dimension of approximating functions) and the quality of fitting the training data (empirical error). Model selection by SRM then corresponds to finding the model simplest in terms of order and best in terms of empirical error on the data.
+
+In such a nested set of functions, every function always contains a previous, less complex, function (for a sketch of this nested set idea, see fig. 2.6). Typically, Hn may be a set of polynomials in one variable of degree n; a fuzzy logic (FL) model having n rules; multilayer perceptrons; or an RBF network having n hidden layer neurons. The definition of nested sets (2.35) is satisfied for all these models because, for example, an NN with n neurons is a subset of an NN with n + 1 neurons, an FL model comprising n rules is a subset of an FL model comprising n + 1 rules, and so on. The goal of learning is one of subset selection, which matches training data complexity with approximating model capacity. In other words, a learning algorithm chooses an optimal polynomial degree or an optimal number of hidden layer neurons or an optimal number of FL model rules.
+[...]
+
+The procedure is outlined as follows:
+\begin{enumerate}
+    \item Using {a priori} knowledge of the domain, choose a set of hypotheses of increasing complexity $n$; where $n$ is generally given by the number of free parameters in the system.  Concrete examples of such hypotheses and their respective complexity measures follow:
+    \begin{enumerate}
+        \item polynomials of degree $n$
+        \item decision trees of size $n$
+        \item multi-layer neural networks with $n$ hidden-layer neurons
+        \item set of splines with $n$ nodes
+        \item fuzzy logic models having $n$ rules
+    \end{enumerate}
+    \item Divide the class of functions into a hierarchy of nested subsets in order of increasing complexity. For example, polynomials of increasing degree $n$.
+    \item Perform {\em empirical risk minimization} on each subset; this is essentially parameter selection.
+    \item Select the model in the series whose sum of empirical risk and VC confidence is minimal.
+\end{enumerate}
+
+As the complexity increases, the number of training errors will usually decrease, but the risk of overfitting the data correspondingly increases.  By applying the theorem to each of the hypothesis spaces, we can choose the hypothesis for which the error bound is tightest.
+
+Consider a partition of the set $\set{H}$ of hypothesis, from which $n$ hypothesis $\mathscr{H}_1 \subset \mathscr{H}_2 \subset \ldots \subset \mathscr{H}_n$ are chosen.  $\mathscr{H}_1$ here represent a very simple hypothesis which has a very low {\em confidence interval} and a very high {\em emperical risk}.  As we move from $\mathscr{H}_1$ to $\mathscr{H}_n$, the hypothesis complexity grows, and as a consequence, the confidence interval rises, and the emperical risk drops.  The bound on the overall risk is defined as the sum of these two classes of risks; it is then easy to imagine that there exists an optimum hypothesis in the range of hypothesis at which the overall risk is minimized.
+
+As an example, consider the hypothesis set $\set{H}$ to be defined as a learning machine, such as a MLNN.  As a function of the number of hidden neurons in such a machine, we define the complexity of the hypothesis $h \in \set{H}_d$; for example a MLNN with a single hidden neuron can be $\mathscr{H}_1$, one with twice that amount can be $\mathscr{H}_2$, and so on.
+The general SRM principal
+
+\section{VC-Dimension of Intervals}
+\section{Case Study}
+\subsection{Axis-Parallel Rectangles}
+\subsection{Circles}
+\subsection{Triangles}
+\subsection{Halfspaces}
+\subsubsection{Lower Bound}
+\subsubsection{Upper Bound}
+
+%-------------------------------------------------------------------------------
+\input{footer}

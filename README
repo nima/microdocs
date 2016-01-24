@@ -1,0 +1,15 @@
+Best Practice Guide - Courtesy of Quadrescence
+==============================================
+
+Don't use {\it foo}, {\sc foo}, {\bf foo}, {\em foo} - that's for primative \TeX.
+Instead upgrade to \LaTeX and use \emph{lol}, \textit{lol}, \textbf{lol},
+\textsc{lol}
+
+Don't use \bullet for the dot product, use \cdot.
+
+Don't exhaust \cdot.
+
+Generally, try not to use \frac when inline, or \sfrac either.  So instead of
+$\frac{1}{2}x^2$, use $x^2/2$.
+
+THIS NEEDS TO BE UPDATED BY QUAD

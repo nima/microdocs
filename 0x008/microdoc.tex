@@ -1,0 +1,74 @@
+%!TEX TS-program = XeLaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x008}
+\newcommand{\theVersion}{0.1}
+\newcommand{\theTitle}{Structural Risk Minimization}
+\newcommand{\theKeywords}{vc-dimension, statistical learning theory, computational learning theory, mathematics, machine-learning}
+\newcommand{\theAbstract}{
+    Structural risk minimization\cite{VC74} is an inductive principle for model selection, used for learning from finite training data sets. It describes a general model of capacity control and provides a trade-off between hypothesis space complexity (the VC dimension of approximating hypotheses) and the quality of fitting the training data (empirical error). Model selection by SRM then corresponds to the search for model, simplest in terms of order, and optimal in terms of empirical error on the data.
+    It is a core concept in {\em Vapnik–Chervonenkis theory}, and was originally defined by Vladimir Vapnik and Alexey Chervonenkis.
+}
+
+\input{header}
+%-------------------------------------------------------------------------------
+
+\section{Notation}
+\begin{flalign*}
+    \lM
+        &: \comment{SRM learning machine}\\
+    \set{U}
+        &: \comment{infinite data population in the universe}\\
+    \set{T} \subset \set{U}
+        &: \comment{training data set, selected at random and $iid$}\\
+    \set{H}_\varsigma
+        &: \comment{hypotheses set of complexity measure $\varsigma$}\\
+    \mathscr{H}_\varsigma \in \set{H}_\varsigma
+        &: \comment{hypothesis of complexity measure $\varsigma$}
+\end{flalign*}
+
+\section{Problem Definition}
+The complexity $\varsigma$, and thus capacity, of a hypotheses set $\set{H}$, from which a learner $\lM$ selects hypothesis $\mathscr{H}$, determines the convergence rate of the learner to the optimal hypothesis;  the learner tries to minimize the {\em empirical risk} $R_{emp}$ by making an optimal selection.
+
+For a given $iid$ training set $\set{T}$, there is a trade-off between the degree to which the empirical risk can be minimized, and to which the empirical risk will deviate from the {\em true risk}.
+
+The goal of learning is thus one of subset selection optimization, which matches training data complexity, with approximating model capacity.
+
+If for instance $\lM$ selects an overly complicated hypothesis to model very simple data $\set{T}$, then the hypothesis will perform exceptionally well on the training data, but given test data, it will in high probability fail due to overfitting.  On the other hand, if $\lM$ selects too simple a hypothesis, it may have a very difficult time classifying the training data to begin with.
+
+The learning algorithm $\lM$ must deviate from such suboptimal solutions, and converge to the optimal level of complexity for the given training data set $\set{T}$.
+
+\section{Intuition and Procedure}
+
+Consider a partition of the set $\set{H}$ of hypotheses, from which $n$ hypothesis $\mathscr{H}_1 \subset \mathscr{H}_2 \subset \ldots \subset \mathscr{H}_n$ are chosen.  In such a nested set of hypotheses, every hypothesis always contains a previous, less complex, hypothesis.  The definition of nested sets is satisfied for all sample cases provided previously; for example, a MNN with $n$ hidden neurons is a subset of another MNN with $i + 1$ neurons, or a fuzzy logic model comprising $n$ rules is a subset of an fuzzy logic model comprising $n + 1$ rules, and so on.
+
+We apply the following procedure in $\set{H}$:
+
+\begin{enumerate}
+    \item Using {a priori} knowledge of the domain, choose a set of hypotheses of increasing complexity $n$; where $n$ is generally given by the number of free parameters in the system.  Concrete examples of such hypotheses and their respective complexity measures follow:
+    \begin{enumerate}
+        \item polynomials, in one variable of degree $n$
+        \item decision trees of size $n$
+        \item multilayer neural networks with $n$ hidden-layer neurons
+        \item set of splines with $n$ nodes
+        \item fuzzy logic models having $n$ rules
+    \end{enumerate}
+    \item Divide the class of hypotheses into a hierarchy of nested subsets in order of increasing complexity. For example, polynomials of increasing degree $n$.
+    \item Perform {\em empirical risk minimization} on each subset; this is essentially parameter selection.
+    \item Select the model in the series whose sum of empirical risk and VC confidence is minimal.
+\end{enumerate}
+
+$\mathscr{H}_1$ here represent a very simple hypothesis which has a very low {\em confidence interval} and a very high {\em emperical risk}.  As we move from $\mathscr{H}_1$ to $\mathscr{H}_n$, the hypothesis complexity grows, and as a consequence, the confidence interval rises, and the emperical risk drops.  In other words, the number of training errors generally decreases, and the risk of overfitting the data correspondingly increases.
+
+The bound on the overall risk is defined as the sum of these two classes of risks, and by applying the theorem to each of the hypothesis spaces, we can choose the hypothesis for which the error bound is tightest.
+
+\begin{flalign}
+    R(\mathscr{H}_i)
+        \leq& R_{emp}(\mathscr{H}_i) + c \sqrt{\frac{\mathscr{D}_{VC}(\set{H}_i)}{l}}\\
+        \leq& R_{emp}(\mathscr{H}_i) + \sqrt{\frac{h(\log(2l/h) + 1) - \log(\eta/4)}{l}}
+\end{flalign}
+
+
+%-------------------------------------------------------------------------------
+\input{footer}

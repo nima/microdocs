@@ -1,0 +1,907 @@
+%!TEX TS-program = LaTeX
+%!TEX encoding = UTF-8 Unicode
+\documentclass[namedreferences]{autons}
+
+\newcommand{\theId}{0x002}
+\newcommand{\theVersion}{0.4}
+\newcommand{\theTitle}{Transitive and Intransitive Noninterference}
+\newcommand{\theKeywords}{security, mathematics, transitive noninterference, intransitive noninterference}
+\newcommand{\theAbstract}{Abstract is abstract}
+
+\input{header}
+%-------------------------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Preliminary}
+
+\subsection{Notation}
+
+The following should only be glanced over for now, and referred back to in the course of reading this document.
+
+\begin{flalign*}
+    \lM &: \comment{a deterministic state machine}\\
+    \set{S} &: \comment{the finite set of states that the state machine can take}\\
+    s \in \set{S} &: \comment{a particular state}\\
+    s_0 \in \set{S} &: \comment{the initial state}\\
+    \set{A} &: \comment{a set of actions}\\
+    a \in \set{A} &: \comment{a particular action}\\
+    \set{D} &: \comment{the security domains/agents set}\\
+    d \in \set{D} &: \comment{a particular security domain}\footnotemark\\
+    \set{A}^* &: \comment{the infinite set of action sequences}\\
+    \alpha \in \set{A}^* &: \comment{an action sequence (ordered)}\\
+    \epsilon \in \set{A}^* &: \comment{the empty action sequence}\\
+    \mathcal{T} &: \comment{a set of recursively nested triples}\\
+    \nonumber
+\end{flalign*}
+\footnotetext{We may also refer to the security domains represented by $d$, more succinctly as ``agents''.}
+
+The following additional notation is used in the second half of the document in relation to intransitive security models:
+\begin{flalign*}
+    \lMM &: \comment{a doubling construct of $\lM$}\\
+\end{flalign*}
+
+\subsection{Synonyms}
+The terms ``domain'', ``security domain'', ``agent'', and sometimes ``principal'' are used synonymously thoughout this document.
+
+\subsection{Operators}
+
+The following list defines the binary operator which we will use throught:
+\begin{flalign*}
+    \cdot  \HSpace&:\HSpace\comment{FSM \emph{step} operator}\\
+    \ccat  \HSpace&:\HSpace\comment{\emph{concatenation} operator}\\
+    \accat \HSpace&:\HSpace\comment{\emph{absorbtive concatenation} operator}\\
+    \nonumber
+\end{flalign*}
+
+Where $\accat$ is the \emph{absorbtive concatenation} binary operator which operates as follows:
+\begin{flalign*}
+    a \ccat x \accat b &= \left\{
+        \begin{array}{ll}
+            a \ccat b         &\mbox{if } x \in \{ a, b \}\\
+            a \ccat x \ccat b &\mbox{otherwise}\\
+        \end{array}
+        \right.
+\end{flalign*}
+
+\subsection{Deterministic Finit State Machine}\label{sec:dfsm}
+The formal description of the state machine $\lM$ will now be presented; we delay the definition of $\lMM$ for later.
+
+This FSM $\lM$ is a deterministic system model which can be described as follows:
+\begin{flalign}
+    \lM &= \langle \set{S}, s_0, \set{A}, \lstep, \lobs, \ldom \rangle \label{eq:dfsm}\\
+    \nonumber
+\end{flalign}
+
+\subsection{Mapping Functions}
+Next, we introduce the various mapping functions:\footnote{Note that the ``set theory'' notation used here is described in \cite{MD001}}
+\begin{flalign}
+    \ldom &: \set{A} \to \set{D}\\
+    \lpurge &: \set{A}^* \times \set{D} \to \set{A}^* \label{eq:purge}\\
+    \lstep &: \set{S} \times \set{A} \to \set{S}\\
+    \lobs &: \set{S} \times \set{D} \to \set{O}\\
+    \nonumber
+\end{flalign}
+
+Briefly, the $\ldom$ function associates each action to an element of the security domain, the $\lpurge$ function maps domains to a subset of actions that are permitted to interfere with it, $\lstep$ is a deterministic transition function, and $\lobs$ maps states to an observation for each security domain.
+
+We take this opportunity to also introduce the additional set of mapping functions which we will us throughout this second section of the document with relation to intransitive security:
+\begin{flalign}
+    \lipurge &: \set{A}^* \times \set{D} \to \set{A}^* \label{eq:ipurge}\\
+    \lview &: \set{A}^* \times \set{D} \to \lobs_d(\set{A} \times \set{O} \cup \set{O})^*\\
+    \lsources &: \set{A}^* \times \set{D} \to \mathcal{P}(\set{D})\\
+    \lta &: \set{A}^* \times \set{D} \to \mathcal{T}\\
+    \nonumber
+\end{flalign}
+
+\subsubsection{The $\lstep$ function}
+
+The statement $step(s, a)$ depicts the state reached by performing a single step $a \in \set{A}$ from state $s$, and it has a shorthand equivalent: $s \cdot a$.
+
+The statement $s \cdot \alpha$ depicts the state reached by performing the sequence of actions $\alpha \in \set{A}^*$ from state $s$.
+
+Hence each change of state in the state machine can be described as follows:
+\begin{flalign*}
+    s \cdot \epsilon &= s   \HSpace\comment{no action, hence no change in state}\\
+    s \cdot a        &= s'  \HSpace\comment{a single deterministic transition}\\
+    s \cdot \alpha   &= s'' \HSpace\comment{state $s''$ after performing actions $\alpha$}\\
+\end{flalign*}
+
+\subsubsection{The $\lobs$ function}
+The $\lobs(d, s)$ function maps a given state, to an observation made by a particular security domain $d \in \set{D}$.  For brevity, we generally use the alternative shorthand notation $\lobs_d(s)$.
+
+\begin{flalign*}
+    \lobs_d &: \set{S} \to \set{O}\\
+\end{flalign*}
+
+\subsubsection{The $\lpurge$ function}
+Similar to the $\lobs$ shorthand, the $\lpurge(d, \alpha)$ is generally written as $\lpurge_d(\alpha)$.
+
+\begin{flalign*}
+    \lpurge_d &: \set{A}^* \to \set{A}^*\\
+\end{flalign*}
+
+Section \autoref{sec:purge} discusses $\lpurge$ in detail.
+
+\subsection{Bibliographic Notes}
+This section is based on work covered in \cite{vdML6a10}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagebreak
+\section{Transitive Noninterference}\label{subsect:noninter}
+
+A noninterference policy defines permitted information flow channels:
+\begin{flalign*}
+    \lpol &: \comment{information flow poliy, where} \lpol \subseteq \set{D} \times \set{D}\\
+    d_1 \lpol d_2 &: \comment{permitted information flow}\\
+\end{flalign*}
+
+Noninterference policies are represented as the reflexive binary relation operator $\lpol$. In the second statement above, the policy $\lpol$ states that actions of domain $d_1$ are permitted to interfere with $d_2$; that is, information is permitted to flow from $d_1$ to $d_2$.
+
+Since, intuitively, a domain is allowed to interfere with, or have information about, itself, this relation is assumed to be \emph{reflexive} \footnote{For a definition of \emph{reflexive}, \emph{transitive}, and \emph{symmetric}, see \cite{MD001}}.  In the earlier work of noninterference, it is also assumed to be \emph{transitive}, but as we will see in the latter parts of this document - this assumption can be removed.
+
+Finally, we make a formal note on transitivity with respect to the policy $\lpol$:
+\begin{flalign*}
+    \text{if } u \lpol v, \text{ and } v \lpol w, \text{ then } u \lpol w
+\end{flalign*}
+
+
+\subsection{P-Security and the $\lpurge$ Function}\label{sec:purge}
+Noninterference is given formal semantics in the transitive case using a definition based on the $\lpurge$ function:  Given a policy $\lpol$, we define the function $\lpurge$ as \eqref{eq:purge} by taking $\lpurge(\alpha, d)$ to be the subsequence of actions $a \in \alpha$ with $\ldom(a) \lpol d$. \footnote{As mentioned previously, $\lpurge(\alpha, d)$ is written as in shorthand notation as$\lpurge_d(\alpha)$, and similarly for $\lobs$, $\ldom$, and $\lstep$.}
+
+We now describe the semantics of transitive policies by first defining ``security'' in this context:
+\DEFN{P-Secure}{
+    The system $\lM$ is said to be \emph{P-secure} with repsect to the transitive policy $\lpol$ if $\forall \alpha \in \set{A}^*$ and domain $d \in \set{D}$, we maintain $\lobs_d(s_0 \cdot \alpha) = \lobs_d(s_0 \cdot \lpurge_d(\alpha))$:
+    \begin{flalign}
+        \lobs_d(s_0 \cdot \alpha) = \lobs_d(s_0 \cdot \lpurge_d(\alpha))
+            \quad \forall \alpha \in \set{A}^*, \forall d \in \set{D}\label{psecure:eq}\\
+        \nonumber
+    \end{flalign}
+    That is, each domain's observations are as if only actions that are allowed to interfere with it (according to the policy $\lpol$)had been performed.
+}
+
+\LEMMA{P-security and \lpurge}{
+    Given that $\lpurge_d(\alpha_1) = \lpurge_d(\alpha_2) \forall \alpha_1, \alpha_2 \in \set{A}^*$, show that $\lobs_d(s_0 \cdot \alpha_1) = \lobs_d(s_0 \cdot \alpha_2)$.
+}
+\PROOF{
+    To solve this, we will begin by assuming that the system is secure; that is, statement \eqref{psecure:eq} holds.  We then use this to solve the {\it LHS} and {\it RHS} of the target proof statement:
+
+    \begin{flalign}
+        \lobs_d(s_0 \cdot \alpha_1) = \lobs_d(s_0 \cdot \lpurge_d(\alpha_1))\\
+        \lobs_d(s_0 \cdot \alpha_2) = \lobs_d(s_0 \cdot \lpurge_d(\alpha_2))\\
+        \nonumber
+    \end{flalign}
+
+    From the problem definition, it is given that $\lpurge_d(\alpha_1) = \lpurge_d(\alpha_2)$, hence the {\it RHS} of both above equations are equal, and so the {\it LHS} of both equations are equal.\\
+
+}
+
+We next demonstrate a simple policy, called the ``\emph{High-Low policy}'', as follows:
+
+\LEMMA{P-security and \lpurge}{
+    Let the policy $\lpol$ be defined as $High \lpol Low$, where $Low$ and $High$ are two security domains.  Let the actions denoted by $l$ represent $Low$ actions, and actions denoted by $h$ represent $High$ actions.  Derive $\lpurge_d(l_1,h_1,l_2,h_2,h_1,l_1)$ for all participating domains.
+}
+
+\PROOF{
+We first make formal note of the given data:
+
+    \begin{flalign*}
+        \set{D} &= \{ High, Low \}\\
+        Low \lpol High &: \comment{Information permitted to flow from Low to High}\\
+        High \not\lpol Low &: \comment{\ldots but not in reverse}\\
+        \therefore \quad \lpol &= \{ (Low, Low), (High, Low), (High, High)) \}\\
+        \nonumber
+    \end{flalign*}
+
+    We now derive the $\lpurge$ for all domains $d \in \set{D}$ as follows:
+
+    Trivially we get $\lpurge_{High}(\alpha) = \alpha$ and realize that in fact $\lpurge_{High}(\alpha) = \alpha \forall \alpha \in \set{A}^*$ for the given defined policy $\lpol$ defined.  More interesting however is the $\lpurge$ function applied to the security domain $Low$, which produces $\lpurge_{Low}(\alpha) = l_1,l_2,l_1$.
+}
+
+\LEMMA{P-security and \lpurge}{
+    Consider a system in which a state is defined by $s = (b, l, e)$, where $\lobs_{Low}(s) = (e)$, and $\lobs_{High}(s) = (b, l)$.  Futhermore, $\set{A}_{Low} = \{ {\tt LWrite(x)} \}$ where $x \in \{0, 1\}$, and $\set{A}_{High} = \{ {\tt HLock(x)} \}$ where $x \in \{0, 1\}$.
+    When $Low$ performs {\tt LWrite(x)} at a time where $l$ is set to {\tt 0}, {\tt x} will be written to $b$, otherwise {\tt 1} is written to $e$.  $High$ can perform the action {\tt HLock(x)} and this will commit {\tt x} to bit $l$.  Is such a system P-secure?
+}
+\PROOF{
+    Take the case where $s_0 = (0, 0, 0)$, and $\alpha = {\tt HLock(1)}.{\tt LWrite(1)}$.  For a system to be P-secure, \eqref{psecure:eq} must hold:
+    \begin{flalign*}
+        LHS &= \lobs_{Low}(s_0 \cdot \alpha)\\
+            &= \lobs_{Low}((0,0,0) \cdot {\tt HLock(1)}.{\tt LWrite(1)})\\
+            &= \lobs_{Low}((0,1,0) \cdot {\tt LWrite(1)})\\
+            &= \lobs_{Low}((0,1,1))\\
+            &= (1)\\
+    \end{flalign*}
+
+    and:
+    \begin{flalign*}
+        RHS &= \lobs_{Low}(s_0 \cdot \lpurge_{Low}(\alpha))\\
+            &= \lobs_{Low}((0,0,0) \cdot \lpurge_{Low}({\tt HLock(1)}.{\tt LWrite(1)}))\\
+            &= \lobs_{Low}((0,0,0) \cdot {\tt LWrite(1)})\\
+            &= \lobs_{Low}((1,0,0))\\
+            &= (0)\\
+    \end{flalign*}
+
+    Since $\lobs_{Low}(s_0 \cdot \alpha) \not= \lobs_{Low}(s_0 \cdot \lpurge_{Low}(\alpha))$, the system is \emph{not} P-secure.
+}
+
+Intuitively, this is tells that $Low$ is able to learn from $High$ via the $e$ bit, for example, it is easy to imagine a trojan in the works which conveys data from $High$ to $Low$ via this 1-bit covert channel.
+
+\subsection{Proving Noninterference Security}
+The noninterference definition of security quantifies over the infinite set $\set{A}^*$, so it is not obvious how to \emph{prove} that a system is secure, in general.  We consider two techniques for the transitive case.
+
+\subsubsection{Unwinding Proof Theory}\label{sec:unwinding}
+
+An \emph{unwinding} for a system $\lM$\eqref{eq:dfsm} is a collection of binary relations $\sim$ which is defined as follows:
+
+\begin{flalign}
+    \sim_d &\subseteq \set{S} \times \set{S} \text{ for } d \in \set{D}
+        \suchthat \eqref{eq:equivrel} \wedge \lOC \wedge \lSC \wedge \lLR\\
+    \nonumber
+\end{flalign}
+
+Where these requirements are defined as follows:
+\begin{flalign}
+    \sim_d &:
+        \text{each } \sim_d
+        \text{ is an equivalence relation on } \set{S}\label{eq:equivrel}\footnotemark\\
+    \lOC &:
+        \text{if } s \sim_d t
+        \text{ then } \lobs_d(s) = \lobs_d(t)\label{eq:oc}\\
+    \lSC &:
+        \text{if } s \sim_d t
+        \text{ then } s \cdot a \sim_d t \cdot a \HSpace\forall a \in \set{A}\label{eq:sc}\\
+    \lLR &:
+        \text{if } \ldom(a) \not\lpol d
+        \text{ then } s \sim_d s \cdot a \label{eq:lr}\\
+    \nonumber
+\end{flalign}
+\footnotetext{For a definition of \emph{equivalence relation} see \cite{MD001}.}
+
+With respect to intransitive policies introduced in the latter parts of this document, another definition proposed by \cite{Rus92} - $\lWSC$ - is introduced, and defined at \eqref{eq:wsc}.
+
+\begin{theorem}
+    If the conditions $\lOC$, $\lSC$, and $\lLR$ are satisfied, and $\lpol$ is transitive, then \lM is P-secure.\cite{GM84}
+\end{theorem}
+
+\paragraph{Doubling Construction for the High-Low Policy}\label{sec:double}
+
+Remember from \eqref{psecure:eq} that a system is secure only if:
+
+\begin{flalign*}
+    \lobs_d(s_0 \cdot \alpha) &= \lobs_d(s_0 \cdot \lpurge_d(\alpha))\\
+    \nonumber
+\end{flalign*}
+
+Intuitively, the modified system records the states resulting from the two runs ($\alpha$ and $\lpurge_d(\alpha)$).
+
+Given a system $\lM$\eqref{eq:dfsm}, we now define the \emph{doubling construction} $\lMM$ as follows:
+\begin{flalign}
+    \lMM &= \langle \set{S}', s_0', \set{A}, \lstep', \lobs', \ldom \rangle \label{em2eq}\\
+    \nonumber
+\end{flalign}
+
+In this new formulation we define the variations from \lM as follows:
+\begin{flalign}
+    \set{S}' &= \set{S} \times \set{S}\\
+    s_0' &= (s_0, s_0)\label{szerodasheq}\\
+    \lstep'((s, t), a) &= \left\{
+        \begin{array}{ll}
+            (\lstep(s, a), \lstep(t, a)) & \HSpace\mbox{ if } \ldom(a) = Low\\
+            (\lstep(s, a), t)            & \HSpace\mbox{otherwise}\\
+        \end{array}
+    \right.\label{eq:stepdash}\\
+    \lobs_d'(s, t) &= (\lobs_d(s), \lobs_d(t)) \HSpace\forall (s, t) \in \set{S}'\\
+    \nonumber
+\end{flalign}
+
+The $\lstep'$ function in \eqref{eq:stepdash} can be written in the alternative shorthand as:
+
+\begin{flalign*}
+    (s, t) \cdot a &= \left\{
+        \begin{array}{ll}
+            (s \cdot a, t \cdot a) & \HSpace\mbox{ if } \ldom(a) = Low\\
+            (s \cdot a, t)         & \HSpace\mbox{otherwise}\\
+        \end{array}
+    \right.\\
+\end{flalign*}
+
+
+\LEMMA{Doubling Construct}{
+    For the security domains $Low$ and $High$, and the doubling construct $\lMM$, show that if
+    \begin{flalign}
+        s_0' \cdot \alpha = (s, t) \mbox{ in } \lMM\label{eq:l4g}
+    \end{flalign}
+    then it follows that
+    \begin{flalign}
+        \left.
+            \begin{array}{ll}
+                s_0 \cdot \alpha &= s\\
+                s_0 \cdot \lpurge_{Low}(\alpha) &= t\\
+            \end{array}
+        \right\} \mbox{ in } \lM \HSpace \forall \alpha \in \set{A}^*\label{eq:l4p}
+    \end{flalign}
+}
+\PROOF{
+    We proceed by induction on the length of $\alpha$.  In the base case, $\alpha = \epsilon$, and if the given conditions in the problem definition are to hold, then we can derive:
+    \begin{flalign*}
+        \alpha &= \epsilon\\
+        s_0' \cdot \alpha &= (s, t) \mbox{ in } \lMM\\
+        \therefore\quad s_0' &= (s, t)\\
+        \therefore\quad (s_0, s_0) &= (s, t)\\
+        \therefore\quad s = t &= s_0\\
+    \end{flalign*}
+
+    We verify this against what the problem definition describes and get:
+    \[
+        \left.
+            \begin{array}{ll}
+                s_0 \cdot \alpha = s_0 &= s\\
+                s_0 \cdot \lpurge_{Low}(\alpha) = s_0 &= t\\
+            \end{array}
+        \right\} \mbox{ in } \lM \HSpace \forall \alpha \in \set{A}^*
+    \]
+
+    For the inductive step, we first assume that the problem definition holds for $\alpha$, and then prove that it holds for $\alpha \cdot a$, where $a$ denotes a single action $\in \set{A}$.  Given that $s_0' \cdot \alpha = (s, t)$ (from the problem definition):
+    \begin{flalign}
+        \mbox{let } s_0' \cdot \alpha \ccat a
+            &= (s^a, t^a)\label{eq:l4x1}\\
+            &= (s_0 \cdot \alpha \ccat a, s_0 \cdot \lpurge_L(\alpha \ccat a))\label{eq:l4x2}
+    \end{flalign}
+
+    Now we need to prove the following:
+    \begin{flalign}
+        \left.
+            \begin{array}{ll}
+                s_0 \cdot \alpha \ccat a &= s^a\\
+                s_0 \cdot \lpurge_{Low}(\alpha \ccat a) &= t^a\\
+            \end{array}
+        \right\} \mbox{ in } \lM \HSpace \forall \alpha \in \set{A}^*\label{eq:l4dp1}
+    \end{flalign}
+
+    By the inductive hypothesis we have:
+    \[
+        \left.
+            \begin{array}{ll}
+                s_0 \cdot \alpha &= s\\
+                s_0 \cdot \lpurge_{Low}(\alpha) &= t\\
+            \end{array}
+        \right\} \mbox{ in } \lM \HSpace \forall \alpha \in \set{A}^*
+    \]
+
+    We now combine \eqref{eq:l4x1} and the definition of $\lMM$ in \eqref{eq:stepdash} to derive our main basis for the proof:
+    \begin{flalign*}
+        (s^a, t^a)
+            &= s_0' \cdot \alpha \ccat a\\
+            &= (s_0' \cdot \alpha) \cdot a\\
+            &= (s, t) \cdot a\\
+            &= \left\{
+                \begin{array}{ll}
+                    (s \cdot a, t \cdot a) & \HSpace\mbox{ if } \ldom(a) = Low\\
+                    (s \cdot a, t)            & \HSpace\mbox{otherwise}\\
+                \end{array}
+            \right.
+    \end{flalign*}
+
+    For $s^a$ we can now show that:
+    \begin{flalign*}
+        s^a &= s \cdot a \HSpace \forall \ldom(a) \in \set{D}\\
+           &= s_0 \cdot \alpha \ccat a\\
+    \end{flalign*}
+
+    which is a partial proof on \eqref{eq:l4dp1}, and similarly, for $t^a$ we can now show using \eqref{eq:l4x2} and \eqref{eq:stepdash} the following:
+    \begin{flalign*}
+        t^a &= \left\{
+            \begin{array}{ll}
+                t \cdot a & \HSpace\mbox{ if } \ldom(a) = Low\\
+                t         & \HSpace\mbox{otherwise}\\
+            \end{array}
+        \right.\\
+        &= \left\{
+            \begin{array}{ll}
+                (s_0 \cdot \lpurge_L(\alpha)) \cdot a
+                    & \HSpace\mbox{ if } \ldom(a) = Low\\
+                (s_0 \cdot \lpurge_L(\alpha))
+                    & \HSpace\mbox{otherwise}\\
+            \end{array}
+        \right.\\
+        &= \left\{
+            \begin{array}{ll}
+                s_0 \cdot (\lpurge_L(\alpha) \cdot a)
+                    & \HSpace\mbox{ if } \ldom(a) = Low\\
+                s_0 \cdot (\lpurge_L(\alpha \ccat a))
+                    & \HSpace\mbox{ if } \ldom(a) = High\\
+            \end{array}
+        \right.\\
+        &= s_0 \cdot (\lpurge_L(\alpha \ccat a))
+            \HSpace \forall \ldom(a) \in \set{D}\\
+    \end{flalign*}
+
+    which completes the proof in \eqref{eq:l4dp1}, and hence \eqref{eq:l4p}
+    The last statement is a generalization which is possible since in the case that $d = High$, we have $s_0 \cdot \lpurge_L(\alpha) = \lpurge_L(\alpha \ccat a)$.
+}
+
+\subsubsection{Model-Checking Proof Theory}
+Standard model checking verifies properties of a single run of the system, so cannot directly be applied to verify noninterference security, which talks about two runs ($\alpha$ and $\lpurge_d(\alpha)$).  However, we can modify the system so that model checking becomes applicable.
+
+\subsection{Bibliographic Notes}
+This section is based on work covered in \cite{vdML5a10} and \cite{vdML5b10}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagebreak
+\section{Intransitive Noninterference}\label{subsect:inoninter}
+A more general and equivalent formulation to the transitive policies, that are not necessarily transitive will be described in this section.  We will begin with the history and motivations behind this approach prior the technical details.
+
+\subsection{History}
+\begin{tabular}{cl}
+    \hline
+    Year & Author(s)\\
+    \hline
+    1982 & Goguen and Meseguer\\
+    1987 & Haigh and Young\\
+    1992 & Rushby\\
+    2007 & van der Meyden\\
+    \hline
+\end{tabular}
+
+First proposed by Goguen and Meseguer in 1982 for transitive policies, was the concept of a more general case for intransitive systems.  Haigh and Young, 5 years later, added extensions to intransitive policies and deterministic systems.  Another 5 years and Rushby added further results and corrections to Haigh and Young's work. Almost a decade later, van der Meyden improved the definition, sharpening Rushby’s theory.
+
+Recall the deterministic system model described in \autoref{sec:dfsm}, described by \eqref{eq:dfsm}.
+
+\subsection{Motivation}
+The standard MLS policy $Low \rightarrow High$ is too restrictive; it prohibits:
+
+\ANGY{
+    Take the president, and let us assume that his classification is indeed above all other powers in the government.  Based on transitive noninterference, nobody - other than the president himself - is allowed to hear or read what he has to say.  Remember the implications of a purely transitive information flow security policy - \emph{write up}, or \emph{read down}.  This means that the thos of higher power \emph{cannot} do any of the following:
+
+\begin{enumerate}
+    \item order the release of battle plans.
+    \item instate declassification of dated information.
+    \item transmit encrypted information.
+\end{enumerate}
+
+    The system - if not flawed - is incomplete.
+}
+
+\EXAM{
+    Take a crypto device - information from $High$ is mostly encrypted for transmission, however there always exists at least some metadata that needs to be transferred with the encrypted data, such as addressing information.  The only secure way to relay this cleartext metadata is via a declassifier, as otherwise it would be a suitable covert channel that could be utilized by an assailant.
+}
+
+In practice, what is needed is a gateway which allows ``controlled exception to the rules'' - a \emph{declassifier} - a trusted downgrader; when this occurs - the policy is then no longer transitive.
+
+\subsection{The $\lipurge$ Function}
+
+The \cite{GM82} definition does not model intransitive policies; that is, it forbids $Low$ from learning anything whatsoever from $High$. Haigh and Young's generalization \cite{HY87} of transitive policies to intransitive policies tried to fix this.
+
+They proposed the new \emph{intransitive purge} function - $\lipurge_d(\alpha)$.
+
+\DEFN{\lipurge}{
+    Given a sequence of actions $\alpha = a_1 \ldots a_n \in \set{A}^*$ and domain $d \in \set{D}$, the \emph{intransitive purge} $\lipurge_d(\alpha)$ is the largest subsequence $a_i \ldots a_l$ of $\alpha \suchthat$ for each $j < k$, either $\ldom(a_j) \lpol d$ or for some $j \leq k$ we have $\ldom(a_j) \lpol \ldom(a_k)$ and $j < k$.  Note that the subsequence is not necessarily consecutive, and usually isn't.
+}
+
+This is all best demonstrated with an example:
+
+\LEMMA{\lipurge}{
+    For the policy $A \lpol B \lpol C \lpol E, D \rightarrow C$, and given that the sequence of actions $\alpha = bedabedacbeda$, compute $\lsources_E$ (for all suffixes) and $\lipurge_E$ for $\alpha$.\\
+}
+\PROOF{
+    We first illustrate the policy as follows:
+
+    \digraph[scale=0.5]{pol1}{
+        node[shape=egg];rankdir=LR;A->B;B->C;C->E;D->C
+    }
+
+    Now we solve iteratively:
+
+    \begin{tabular}{rlr}
+        \hline
+        $\alpha$ & $\lsources_E$ & $\lipurge_E$\\
+        \hline
+        $     \epsilon$ & $\{ E         \}$ & $ \epsilon$\\
+        $            b$ & $\{ E         \}$ & $ \epsilon$\\
+        $           be$ & $\{ E         \}$ & $ \epsilon$\\
+        $          bed$ & $\{ E         \}$ & $        e$\\
+        $         beda$ & $\{ E         \}$ & $        e$\\
+        $        bedab$ & $\{ E,C       \}$ & $       ce$\\
+        $       bedabe$ & $\{ E,C       \}$ & $       ce$\\
+        $      bedabed$ & $\{ E,C,D     \}$ & $      dce$\\
+        $     bedabeda$ & $\{ E,C,D     \}$ & $     edce$\\
+        $    bedabedac$ & $\{ E,C,D,B   \}$ & $    bedce$\\
+        $   bedabedacb$ & $\{ E,C,D,B,A \}$ & $   abedce$\\
+        $  bedabedacbe$ & $\{ E,C,D,B,A \}$ & $  dabedce$\\
+        $ bedabedacbed$ & $\{ E,C,D,B,A \}$ & $ edabedce$\\
+        $bedabedacbeda$ & $\{ E,C,D,B,A \}$ & $bedabedce$\\
+        \hline
+    \end{tabular}
+
+    Ans so we have that:
+    \begin{flalign*}
+        \lipurge_E(bedabedacbeda) &= bedabedce\\
+        \lsources_E(bedabedacbeda) &= \{ E,C,D,B,A \}\\
+    \end{flalign*}
+}
+
+\subsection{IP-Security}
+
+\DEFN{IP-Secure}{
+    The system $\lM$ \eqref{eq:dfsm} is said to be IP-secure with repsect to the policy $\lpol$ if $\forall \alpha, \alpha' \in \set{A}^*$ and domain $d \in \set{D}$, where $\lipurge_d(\alpha) = \lipurge(\alpha')$, we maintain $\lobs_d(s_0 \cdot \alpha) = \lobs_d(s_0 \cdot \alpha')$.  Formally then:
+    \begin{flalign}
+        \mbox{if } \lipurge_d(\alpha) &= \lipurge_d(\alpha') \HSpace\forall \alpha, \alpha' \in \set{A}^*, \forall d \in \set{D}\nonumber\\
+        \mbox{then } \lobs_d(s_0 \cdot \alpha) &= \lobs_d(s_0 \cdot \alpha')\label{ipsecure:eq}
+    \end{flalign}
+    must hold true if we are to call a system IP-secure.
+}
+
+\subsubsection{IP-Security vs P-Security}
+\begin{theorem}
+If $\lpol$ is transitive, then $\lipurge_d(\alpha) = \lpurge_d(\alpha)$, and hence IP-security = P-Security.
+\end{theorem}
+
+\subsection{Knowledge in Asynchronous Systems and \lview}
+
+We first define the $\lview$ of domain $d \in \set{D}$ with respect to $\alpha \in \set{A}^*$ as follows:
+
+\DEFN{\lview}{
+    \begin{flalign}
+        \lview_d(\epsilon) &= \lobs_d(s_0)\\
+        \lview_d(\alpha \ccat a) &= \left\{
+            \begin{array}{ll}
+                \lview_d(\alpha) \ccat a \ccat \lobs_d(s_0 \cdot \alpha \ccat a)
+                    \HSpace\mbox{if }\ldom(a) = d\\
+                \lview_d(\alpha)\accat\lobs_d(s_0 \cdot \alpha \ccat a)
+                    \HSpace\mbox{otherwise}\\
+            \end{array}
+            \right.\\
+        \nonumber
+    \end{flalign}
+
+    \begin{theorem}
+        In the run generated by a sequence of actions $\alpha$, agent $d$ \emph{knows} a fact $\phi$ about $\alpha$ if $\phi$ is true of all sequences $\alpha'$ such that $\lview_d(\alpha) = \lview_d(\alpha')$.
+    \end{theorem}
+}
+
+This is again best demonstrated with an example:
+
+\LEMMA{\lview}{
+    Consider the system $\lM$ where a domain $H$ has a bit $b$ with lock $l$, and actions {\tt Lock}, {\tt Unlock}. The domain $L$ has action {\tt Write($x$)} (where $x \in \{ 0,1 \}$) for writing $b$, which however sets error bit $e = 1$ if $L$ writes when $l = 1$.  Finally, $L$ can only observe $e$ of any give state.\\
+
+    Show what $L$ knows after the sequence of actions ${\tt Lock}_H$, ${\tt Unlock}_H$, ${\tt Write(1)}_L$, ${\tt Lock}_H$, and finally ${\tt Write(0)}_L)$.
+}
+\PROOF{
+We begin by formally stating the facts:
+\begin{flalign*}
+    \alpha &= {\tt Lock}_H \ccat {\tt Unlock}_H \ccat {\tt Write(1)}_L \ccat {\tt Lock}_H \ccat {\tt Write(0)}_L\\
+    \set{D} &= \{ L, H \}
+        \HSpace\comment{the active agents}\\
+    s &= (b, l, e), \text{ and } b, l, e \in \{ 0, 1 \}
+        \HSpace\comment{state definition}\\
+    \lobs_L(s) &= (b, l)\\
+    \lobs_H(s) &= (e)\\
+    \ldom(a) &= L \quad \forall a \in \{ {\tt Write(0)}_L, {\tt Write(1)}_L \}\\
+    \ldom(a) &= H \quad \forall a \in \{ {\tt Lock}_H, {\tt Unlock}_H \}\\
+    s_0 &= (0, 0, 0) \HSpace\comment{initial state}\\
+\end{flalign*}
+
+We now evaluate $\lview_L(\alpha)$:
+\begin{flalign*}
+    \lview_L(\alpha) &= \lview_L(\\
+        &(0, 0, 0) \cdot {\tt Lock}_H, \\
+        &(0, 1, 0) \cdot {\tt Unlock}_H, \\
+        &(0, 0, 0) \cdot {\tt Write(1)}_L, \\
+        &(1, 0, 0) \cdot {\tt Lock}_H, \\
+        &(1, 1, 0) \cdot {\tt Write(0)}_L, \\
+        &(0, 1, 1)\\
+    ) &= (0) \accat (0) \accat (0) \accat{\tt Write(1)}_L \accat (0) \accat (0) \accat {\tt Write(0)}_L \accat (1)\\
+    &= (0) \accat{\tt Write(1)}_L \accat (0) \accat {\tt Write(0)}_L \accat (1)\\
+\end{flalign*}
+
+This means that by the end of $\alpha$, $L$ knows that $H$ \emph{must} have performed at least one {\tt Lock} action, as that is the only possible explanation for $L$ as to why $L$'s observation of $e$ changed from 0 to 1 (after the secont {\tt Write}).
+}
+
+\subsection{Distributed Knowledge}
+This is about ``what the agents $\set{G}$ would know collectively, if they were to pool all their information''.
+
+\begin{theorem}
+    A fact $\phi$ is \emph{distributed knowledge} to group $\set{G}$ in a sequence $\alpha$ if it holds of all sequences $\alpha' \suchthat \lview_d{\alpha} = \lview_d{\alpha'}, \forall d \in \set{G}$.
+\end{theorem}
+
+\LEMMA{Distributed Knowledge}{
+    For the policy $H_1 \lpol D_1 \lpol L, H_2 \lpol D_2 \rightarrow L$, define the system $\lM$ given the sequence of actions $\alpha = h_2, h_2, d_1, d_2, l$ of domains $H_2, H_2, D_1, D_2, L$ respectively, the states $\in \set{A}^*$, $s_0 = \epsilon$, and transitions via $\lstep(\alpha, a) = a \ccat \alpha$ for $\alpha \in \set{A}^*$ and $a \in \set{A}$.  Let $\lobs_d(\alpha) = [\lipurge(\alpha)]$.
+}
+\PROOF{
+    \digraph[scale=0.5]{pol2}{
+        node[shape=egg];rankdir=LR;H1->D1->L;H2->D2->L;
+    }
+}
+
+FIXME - We stop here, and move over to a refined method - replacing the use of $\lview$ with $\lta$ - in TA-Security.
+
+\subsection{The $\lta$ function}
+\DEFN{\lta}{
+    Given a policy $\lpol$, define, for each agent $d \in \set{D}$, the function $\lta_d : A^* \to \mathcal{T}$ inductively by $\lta_d(\epsilon)=\epsilon$, and, for $\alpha \in \set{A}^∗$ and $a \in \set{A}$.
+
+    \begin{flalign}
+        \lta_d(\alpha \ccat a) &= \left\{
+            \begin{array}{ll}
+                \epsilon \HSpace\mbox{if } a = \alpha = \epsilon\\
+                \lta_d(\alpha) \HSpace\mbox{if } \ldom(a) \not\lpol d\\
+                (\lta_d(\alpha), \lta_{\ldom(a)}(\alpha), a) \HSpace\mbox{if } \ldom(a) \lpol d\\
+            \end{array}
+            \right.
+    \end{flalign}
+
+    This implies that $\mathcal{T}$ is a set of recursively nested triples.
+}
+
+\subsection{TA-Security}
+\DEFN{TA-Security}{
+    Define a system \lM to be TA-secure with respect to the policy $\lpol$ if $\forall d \in \set{D}, \forall \alpha,\alpha' \in \set{A}^* \suchthat \lta_d(\alpha) = \lta_d(\alpha')$, we have $\lobs(s_0 \cdot \alpha) = \lobs(s_0 \cdot \alpha')$.\\
+
+That is:
+    \begin{flalign}
+        \mbox{if } \lta_d(\alpha) &= \lta_d(\alpha') \HSpace \forall \alpha, \alpha' \in \set{A}^*, \forall d \in \set{D}\nonumber\\
+        \mbox{then } \lobs_d(s_0 \cdot \alpha) &= \lobs_d(s_0 \cdot \alpha')\label{tasecure:eq}
+    \end{flalign}
+must hold for the system to be TA-secure.  Intuitively, this says that each agent's observations depend purely on the maximal amount of information that may have been transmitted to it, as expressed by the function $\lta$.\\
+}
+
+\LEMMA{TA-security and \lta}{
+    For the policy $H_1 \lpol D_1 \lpol L, H_2 \lpol D_2 \rightarrow L$, define the system $\lM$ given the sequence of actions $\alpha$, $\alpha'$, calculate $\lta_L(\alpha)$, $\lta_L(\alpha'), \lobs_L(s_0 \cdot \alpha)$, and $\lobs_L(s_0 \cdot \alpha')$ and prove the TA-security of \lM.
+        \begin{flalign*}
+            \alpha  &= h_1 \ccat h_2 \ccat d_1 \ccat d_2 \ccat l\\
+            \alpha' &= h_2 \ccat h_1 \ccat d_1 \ccat d_2 \ccat l\\
+            \mbox{where} &: l \in L, d_x \in D_x, h_x \in H_x\\
+        \end{flalign*}
+}
+\PROOF{
+    \begin{center}
+        \digraph[scale=0.5]{pol2}{
+            node[shape=egg];rankdir=LR;H1->D1->L;H2->D2->L;
+        }
+    \end{center}
+    \begin{flalign*}
+        \lta_L(\alpha)
+            &= \lta_L(h_1.h_2.d_1.d_2) \\
+            &= (\lta_L(h_1.h_2.d_1), \lta_{D_2}(h_1.h_2.d_1), d_2)\\
+            &= ((\lta_L(h_1.h_2), \lta_{D_1}(h_1.h_2), d_1), \lta_{D_2}(h_1.h_2), d_2)\\
+            &= ((\lta_L(h_1), \lta_{D_1}(h_1), d_1), (\lta_{D_2}(h_1), \lta_{H_2}(h_1), h_2), d_2)\\
+            &= ((\epsilon, (\epsilon, \epsilon, h_1), d_1), (\epsilon, \epsilon, h_2), d_2)\\
+        \lta_L(\alpha')
+            &= \lta_L(h_2.h_1.d_1.d_2) \\
+            &= (\lta_L(h_2.h_1.d_1), \lta_{D_2}(h_2.h_1.d_1), d_2)\\
+            &= ((\lta_L(h_2.h_1), \lta_{D_1}(h_2.h_1), d_1), \lta_{D_2}(h_2.h_1), d_2)\\
+            &= ((\lta_L(h_2), (\lta_{D_1}(h_2), \lta_{H_1}(h_2), h_1), d_1), (\epsilon, \epsilon, h_2), d_2)\\
+            &= ((\epsilon, (\epsilon, \epsilon, h_1), d_1), (\epsilon, \epsilon, h_2), d_2)\\
+        \lobs_L(s_0 \cdot \alpha)
+            &= [\lipurge(\alpha)]\\
+            &= [\lipurge(h_1.h_2.d_1.d_2)]\\
+            &= h_1.h_2.d_1.d_2\\
+        \lobs_L(s_0 \cdot \alpha')
+            &= [\lipurge(\alpha')]\\
+            &= [\lipurge(h_2.h_1.d_1.d_2)]\\
+            &= h_2.h_1.d_1.d_2\\
+    \end{flalign*}
+
+    Hence $\lta_L(\alpha) = \lta_L(\alpha')$, however $\lobs_L(s_0 \cdot \alpha) \not = \lobs_L(s_0 \cdot \alpha')$; the system is \emph{not} TA-secure.
+}
+
+\subsection{P-security $\Rightarrow$ TA-security $\Rightarrow$ IP-security}
+
+\begin{theorem}
+P-security $\Rightarrow$ TA-security $\Rightarrow$ IP-security, furthermore if $\lpol$ is transtive, then P-security $=$ TA-security $=$ IP-security.
+\end{theorem}
+
+
+\subsection{Unwinding and Access Control Models}
+
+\subsubsection{Unwinding Intransitive Noninterference}
+Recall \autoref{sec:unwinding}.
+We now build upon that by introducing the following:
+
+\begin{flalign}
+    \lWSC &: \text{if } s \sim_d t
+        \wedge s \sim_{\ldom(a)} t
+        \Rightarrow s \cdot a \sim_d t \cdot a
+    \label{eq:wsc}
+\end{flalign}
+
+Find the previous definitions of $\lOC$, $\lSC$, and $\lLR$ at \eqref{eq:oc}, \eqref{eq:sc} and \eqref{eq:lr} respectively.
+
+\begin{prop}
+Suppose that $\sim_d$ are equivalence relations on the states of a system $\lM$ that satisfy $\lOC$, $\lWSC$ and $\lLR$.  Then $\lM$ is IP-secure for $\lpol$. \cite{Rus92}
+\end{prop}
+
+TA-security now introduces a stronger result:
+
+\begin{theorem}
+Suppose that $\sim_d$ are equivalence relations on the states of a system $\lM$ that satisfy $\lOC$, $\lWSC$ and $\lLR$.  Then $\lM$ is TA-secure for $\lpol$.
+\end{theorem}
+
+Recall that TA-security \emph{implies} IP-security; so this is a \emph{stronger} conclusion, one that Rushby would not have been aware of at the time of his paper.
+
+\LEMMA{Weak Unwinding on $\lM$}{
+    Consider the downgrader policy $H \lpol D \lpol L$. Let $\lM$ be the system where states have the form $(h, l)$, where $h, l \in \{0, 1\}$, the initial state is $(0,0)$, $H$ has actions {\tt Write(0)} and {\tt Write(1)} that write to $h$, and $D$ has an action {\tt Copy} such that $(h, l) \cdot {\tt Copy} = (h, h)$.  Let the observations be given by $\lobs_H(s) = (h)$, $\lobs_D(s) = h$, and $\lobs_L(s) = l$.\\
+
+    Find a weak unwinding on this system and conclude if it is TA-secure.
+}
+
+\PROOF{
+    As always, we first formalize the given data:
+    \begin{flalign*}
+        s          &= (h, l) \text{ where } h, l \in \{ 0, 1 \}\\
+        s_0        &= (0, 0)\\
+        \set{D}    &= \{ L, H, D \}\\
+        \ldom(a)   &= H
+            \HSpace\forall a \in \{ {\tt Write(x)} \} \text{ where } x \in \{ 0, 1 \}\\
+        \ldom(a)   &= D
+            \HSpace\forall a \in \{ {\tt Copy()} \} \suchthat (h, l) \cdot {\tt Copy()} = (h, h)\\
+        \lobs_H(s) &= \{h\}\\
+        \lobs_D(s) &= \{h\}\\
+        \lobs_L(s) &= \{l\}
+    \end{flalign*}
+
+    For any binary relation defined by $\sim \in \set{S} \times \set{S}$, and given any two states $s, t \in \set{S}$, if $f(s) = f(t)$, for some function $f$, then $\sim$ must be an equivalence relation by definition.  We now need to find such a function $f_d(s)$ for each domain $d \in \set{D}$.  We intuitively creat these function in alignment with the respective domains' observations:
+    \begin{flalign*}
+        f_H(s) = h\\
+        f_D(s) = h\\
+        f_L(s) = l
+    \end{flalign*}
+
+    We're now equipped with an equivalence relation that also satisfies $\lOC$ by definition; we are yet to show that $\lWSC$ and $\lLR$ still hold.  We begin with the former.\\
+
+    To prove the system $\lM$ is indeed TA-secure, and supposing that the {\it LHS} of $\lWSC$ \eqref{eq:wsc} is true, we need to show that the {\it RHS} holds; we do this for each action $a \in \set{A}$. To begin with, we first present the three components of $\lWSC$ as follows:
+
+    \begin{flalign}
+        (h, l) &\sim_d (h', l')                  \label{eq:wsc1}\\
+        (h, l) &\sim_{\ldom(a)} (h', l')         \label{eq:wsc2}\\
+        (h, l) \cdot a &\sim_d (h', l') \cdot a  \label{eq:wsc3}\\
+        \nonumber
+    \end{flalign}
+
+    Now we check that $\lWSC$ holds for all elements of $\set{D} \times \set{A}$:
+    \begin{enumerate}
+        \item If $a = {\tt Write(x)}$, and hence $\ldom(a) = H$:
+        \begin{enumerate}
+            \item For \eqref{eq:wsc2} to hold, it must be that $h = h'$.
+            \item For \eqref{eq:wsc1} and hence \eqref{eq:wsc3} to hold:
+            \begin{enumerate}
+                \item $(h, l) \cdot {\tt Write(x)} \sim_d (h', l') \cdot {\tt Write(x)}$
+                \item therefore $(x, l) \sim_d (x, l')$.
+                \item If $d = L$, it must be that $l = l'$ and $(x, l) \sim_L (x, l')$.
+                \item If $d = D$, it must be that $h = h'$ and $(x, l) \sim_D (x, l')$.
+                \item If $d = H$, it must be that $h = h'$ and $(x, l) \sim_H (x, l')$.
+            \end{enumerate}
+        \end{enumerate}
+
+        \item If $a = {\tt Copy}$, and hence $\ldom(a) = D$:
+        \begin{enumerate}
+            \item For \eqref{eq:wsc2} to hold it must be that $h = h'$.
+            \item For \eqref{eq:wsc1} and hence \eqref{eq:wsc3} to hold:
+            \begin{enumerate}
+                \item $(h, l) \cdot {\tt Copy()} \sim_d (h', l') \cdot {\tt Copy()}$,
+                \item therefore $(h, h) \sim_d (h', h')$.
+                \item If $d = L$, it must be that $l = l'$ and $(h, h) \sim_L (h', h')$.
+                \item If $d = D$, it must be that $h = h'$ and $(h, h) \sim_L (h', h')$.
+                \item If $d = H$, it must be that $h = h'$ and $(h, h) \sim_L (h', h')$.
+            \end{enumerate}
+        \end{enumerate}
+    \end{enumerate}
+}
+
+\subsection{Bibliographic Notes}
+This section is based on work covered in \cite{vdML6a10}, \cite{vdM07} and \cite{Rus92}.
+
+\section{Access Control}
+
+\subsection{Structured State Machines}
+According to Rushby, a system $\lM$ has a \emph{structured state} is one with:
+\begin{flalign}
+    \set{N} &: \text{a set of \emph{names}/objects}\\
+    \set{V} &: \text{a set of \emph{values} and functions}\\
+    \lcontents &: \set{S} \times \set{N} \to \set{V}\\
+    \lobserve &: \set{D} \to \mathcal{P}(\set{N})\\
+    \lalter &: \set{D} \to \mathcal{P}(\set{N})\\
+    \nonumber
+\end{flalign}
+
+Where $\lcontents(s, n)$ is interpreted as the value of object $n \in \set{N}$ in state $s \in \set{S}$,  $\lobserve(d)$ is interpreted as the set of objects that domain $d \in \set{D}$ can observe, and $\lalter(d)$ is interpreted as the set of objects whose values domain $d \in \set{D}$ is permitted to alter.
+
+For a \emph{structured state} system $\lM$ where $d \in \set{D}$, $s \in \set{S}$ we define $\lstate_d(s): \lobserve(d) \to \set{V}$ by:
+\begin{flalign}
+    \lstate_d(s)(n) = \lcontents(s, n) \mbox{ for } n \in \lobserve(d)
+\end{flalign}
+
+We define a binary relation $\sim_d^{oc}$ of \emph{observable content equivalence} on $\set{S}$ for each domain $d \in \set{D}$, by:
+\begin{flalign}
+    s \sim_d^{oc} t \HSpace\mbox{ if } \lstate_d(s) = \lstate_d(d)
+\end{flalign}
+
+\subsection{Reference Monitoring Assumptions}
+
+\DEFN{RM Assumptions}{
+    \begin{flalign}
+        RM1 &: \mbox{If } s \lsimoc t
+            \mbox{ then } \lobserve_d(s) = \lobserve_d(t)\label{eq:rm1}\\
+        RM2 &: \mbox{If } s \lsimocd{a} t \wedge \oplus(\nonumber\\
+            &\lcontents(t \cdot a, n) \not= \lcontents(t, n),\nonumber\\
+            &\lcontents(s \cdot a, n) \not= \lcontents(s, n)\nonumber\\
+        ) &\mbox{ then } \lcontents(s \cdot a, n) = \lcontents(t \cdot a, n)\label{eq:rm2}\\
+        RM3 &: \mbox{If } \lcontents(s \cdot a, n) \not= \lcontents(s, n)\nonumber\\
+            &\mbox{ then } n \in \lalter(\ldom(a))\label{eq:rm3}
+    \end{flalign}
+}
+
+Intuitively {\emph RM1} states that ``$u$ observations can depend only on the values of objects in $\lobserve(u)$''.
+
+{\emph RM2} is unintuitive, and can be rewritten as follows:
+\begin{flalign}
+    \forall s \in \set{S}, & \forall t \lsimocd{a} s \mbox{ we have} : \nonumber\\
+    \oplus &\left\{
+        \begin{array}{ll}
+            \lcontents(t \cdot a, n) &= \lcontents(t, n)\\
+            \lcontents(s \cdot a, n) &= \lcontents(s, n)\\
+        \end{array}
+    \right.
+\end{flalign}
+
+Intuitively then, {\emph RM2} states that ``either action $a$ does \emph{not} affect the value of object $n$ at all, or else the new value of $n$ after $a$ depends only on the values of objects that $\ldom(a)$ can observe''.
+
+Finally, the intuition behind {\emph RM3} is that ``if action $a$ a changes the value of object $n$, then $\ldom(a)$ is permitted to alter $n$''.
+
+\subsection{Consistency Accross Control Systems}
+
+Consistency accross control systems with a policy is defined with {\emph AOI}:
+\DEFN{AOI}{
+    If $\lalter(u) \cap \lobserve(v) \not= \emptyset \text{ then } u \lpol v$.
+}
+
+\EXAM{
+    \begin{tabular}{c|cc}
+        $d$ & $\lobserve(d)$ & $\lalter(d)$\\
+        \hline
+        L & l & l\\
+        H & l,h & h\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{c|cc}
+        $d$ & $\lobserve(d)$ & $\lalter(d)$\\
+        \hline
+        L & l & l\\
+        H & l,h & h\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{c|cc}
+        $d$ & $\lobserve(d)$ & $\lalter(d)$\\
+        \hline
+        L & l & l\\
+        H & l,h & h\\
+        \hline
+    \end{tabular}
+
+    \begin{tabular}{c|cc}
+        $d$ & $\lobserve(d)$ & $\lalter(d)$\\
+        \hline
+        L & l & l\\
+        H & l,h & h\\
+        \hline
+    \end{tabular}
+}
+
+\subsection{A Weaker Notion of Access Control}
+
+{\emph RM2'} states that:
+\begin{flalign}
+    \forall s,t \in \set{S}, & \forall a \in \set{A}, \mbox{ and } n \in \lalter(\ldom(a))\nonumber\\
+        \mbox{if }   s &\lsimocd{a} t \nonumber\\
+        \mbox{and }  \lcontents(s, n) &= \lcontents(t, n)\nonumber\\
+        \mbox{then } \lcontents(s \cdot a, n) &= \lcontents(t \cdot a, n)
+\end{flalign}
+
+Say $\lM$ - a system with \emph{structured states} - is a \emph{weak access control system}.  $\lM$ is compatible with the policy $\lpol$ if it satisfies {\emph RM1}, {\emph RM2'}, {\emph RM3}, and \lAOI.
+
+\begin{prop}
+    If $\lM$ is a weak access control system compatible with the policy $\lpol$, then $\lM$ is TA-secure (and hence IP-secure) for $\lpol$.
+\end{prop}
+
+%-------------------------------------------------------------------------------
+\input{footer}

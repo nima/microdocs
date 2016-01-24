@@ -1,0 +1,344 @@
+\documentclass{microdoc}
+
+\title{Ramanujan, Modular Functions, $\pi$, Oh My! Part I}%
+\author{\authb{Robert Smith}{quadricode@gmail.com}}%
+\docnum{0x00D}%
+\version{0.1}%
+\keywords{class polynomial, Hilbert, near-integer, pi, Ramanujan,
+  Weber}%
+\prereqs{Some knowledge about number theory, polynomials, a little bit
+  of complex analysis, and the like. A review of group theory is
+  presented.}%
+\abstract{This is the first part of a series about so-called
+  \emph{near-integers}, irrational numbers that are incredibly close
+  to an integer. We expose this phenomenon, and show how it can be
+  used to develop formulas to compute $\pi$, and how it's all related
+  to a bizarre concept in group theory called the \emph{Monster
+    group}. In this part, Part I, we will focus more so on
+  near-integers and their relationships in number theory, only briefly
+  touching on the latter topics, which will be elucidated in later
+  parts.}
+
+\usepackage{amssymb}
+\newcommand{\ee}{\ensuremath{\mathrm{e}}}
+\newcommand{\ii}{\ensuremath{\mathrm{i}}}
+\newcommand{\SL}{\ensuremath{\mathrm{SL}}}
+\newcommand{\PSL}{\ensuremath{\mathrm{PSL}}}
+\newcommand{\defn}[1]{\textbf{#1}}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+Let $\ee$ be the usual constant approximately equal to
+$2.718281828$. One can see that
+\begin{equation}
+  \label{eq:ramconst}%
+  \ee^{\pi\sqrt{163}} = 262537412640768743.99999999999925\ldots
+\end{equation}
+It is immediately apparent that this number is very, very close to an
+integer. This is quite unusual since $\ee$ and $\pi$ are so called
+\defn{transcendental numbers}, which means no polynomial whose
+coefficients are rational ever have them as a root. Yet $\ee^{\pi\surd
+  163}$ is absurdly close to an integer, and all integers are
+non-transcendental, or algebraic. \defn{Algebraic numbers} are those
+which \emph{can} be represented by the root of some polynomial whose
+coefficients are rational. All numbers of the form $\sqrt{n}$ where
+$n$ is a rational number are algebraic, because they satisfy $x^2 - n
+= 0$, a polynomial of degree $2$ with coefficients $1$ and $-n$.
+
+The (reasonable) skeptic might dismiss \eqref{eq:ramconst} as just a
+coincidence, for there are an infinitude of numbers of the form
+$\ee^{\pi\surd n}$, and at least one of them is bound to be close to
+an integer. To that skeptic, I say
+\begin{align}
+  \ee^{\pi\sqrt{67}}  &= 5280^3 + 743.9999986\ldots\label{eq:hilbert1}\\
+  \ee^{\pi\sqrt{163}} &= 640320^3 + 743.99999999999925\ldots\label{eq:hilbert2}\\
+  \intertext{and}
+  \ee^{\pi\sqrt{22}} &= 2^6 (1+\sqrt{2})^{12} + 23.99988\ldots\label{eq:weber1}\\
+  \ee^{\pi\sqrt{58}} &= 2^6 \left(\frac{5+\sqrt{29}}{2}\right)^{12} + 23.999999988\ldots\label{eq:weber2}\\
+  \intertext{and}
+  \ee^{\pi\sqrt{42}}  &= 4^4 (21 + 8\sqrt{6})^4 - 104.0000062\ldots\label{eq:raman1}\\
+  \ee^{\pi\sqrt{130}} &= 12^4 (323 + 40\sqrt{65})^4 - 104.0000000000012\ldots\label{eq:raman2}
+\end{align}
+One hopes the skeptic's curiosity has begun to tingle; such
+relationships are difficult to label as simple coincidence.
+
+Such a curiosity is well deserved; there is indeed a pattern going
+on. The pair of equations \eqref{eq:hilbert1} and \eqref{eq:hilbert2}
+are called \defn{near-integers}, and have to do with the concept of
+modular functions and Hilbert class polynomials. The latter pairs of
+equations are not near-integers, but they are \defn{near-algebraics}
+since they are so close to an algebraic number (which can be seen by
+the fact that they are approximately an algebraic number\footnote{If
+  this isn't obvious, allow me to develop some intuition. Algebraic
+  numbers are those composed of the usual arithmetic operations:
+  addition, subtraction, multiplication, and division; along with
+  exponentiation by an integer or rational. Since $x^{1/2}=\sqrt{x}$,
+  algebraic numbers will often contain square roots, and similarly,
+  cube roots, etc. This comes as no surprise, since an algebraic
+  number is \emph{defined} as a number which is the \emph{root} of a
+  polynomial.} plus a near-integer). They are related to the Weber and
+Ramanujan class polynomials respectively.
+
+\section{Groups}
+\subsection{Review of Groups}
+A \defn{group} is a set of objects $S$ along with a binary operation $+$
+such that
+\begin{itemize}
+  \item $a+b$ is in $S$ for all $a,b\in S$,
+  \item $a+(b+c) = (a+b)+c$ holds for all $a,b,c$,
+  \item there is some element of $S$ called the \defn{identity
+    element} $\iota$ such that for all $x\in S$, $\iota+x = x+\iota = x$, and
+  \item for all $x\in S$, there exists another element in the group
+  $y$ such that $x+y = \iota$. The element $y$ is called the
+  \defn{inverse} of $x$, and is sometimes denoted $x^{-1}$.
+\end{itemize}
+Note that $+$ may not refer to the usual arithmetic addition, but any
+possible operator.
+
+A simple example of a group is the set of integers $\mathbb{Z}$ along
+with the addition operation $+$. It is obvious that if
+$a,b,c\in\mathbb{Z}$, that $a+b$ will also be an integer, that the
+``precedence'' of addition doesn't matter (we can add any pair of
+integers first, as long as we don't change the order), that the number
+$0$ can be added to any number without changing it, and there is a
+number $y$ corresponding to every number $x$ such that $x+y=0$,
+namely, the negative of $x$.
+
+A more abstract example of a group would be the group of $90^\circ$
+rotations and horizontal/vertical/diagonal reflections of a harpoon,
+$\upharpoonleft$. Denote a rotation of $90^\circ$ clockwise as $r$. We
+can always turn it counter clockwise to get the original harpoon. So
+one clockwise and one counterclockwise rotation are
+inverses. Therefore, denote the counterclockwise rotation as $r^{-1}$
+so $r r^{-1} = \iota$, where $\iota$ means ``no rotation''. We can
+write successive rotations as $rrr$ or simply $r^3$, meaning ``three
+clockwise rotations''. Immediately, we can see that $r^3 = r^{-1}$.
+
+Denote $h$ as a horizontal flip. So applying $h$ to $\upharpoonleft$
+would give $\downharpoonleft$, Let $v$ be a vertical flip, so applying
+$v$ to $\upharpoonleft$ gives $\upharpoonright$. Lastly, let $d_1$ be
+a diagonal flip, so that applying $d_1$ to $\upharpoonleft$ gives
+$\rightharpoondown$. Let $d_2$ be the flip along the other diagonal,
+so $d_2$ on $\upharpoonleft$ gives $\leftharpoonup$.
+
+We can see that all of the flips are their own inverse; $h^2=\iota$,
+$v^2=\iota$, etc. We also might see that the flips are related to each
+other when we use rotations---$rv = d_1$ (note that we perform the
+rightmost action first, i.e., $rv$ is a vertical flip, then a
+rotation). We can derive a number of other relationships. Most
+importantly, for any number of actions we choose, we can always
+rewrite it as another action. That is, no matter how we rotate or flip
+the harpoon, we will always have a harpoon that requires only one
+action\footnote{We regard consecutive rotations as a single action. So
+  $r^3$ is a single rotation of $270^\circ$.}. Although the order of
+the actions \emph{does} matter, it is easy to see that as long as we
+don't change the order, we can perform the actions in any way we
+want. Lastly, it is obvious how to make an inverse of any sequence of
+actions; just do them in reverse! So since every action is equivalent
+to a single action, and precedence does not matter, and we are allowed
+a ``do nothing'' action, and we can invert all actions, we have formed
+a group. This is commonly known as the \defn{dihedral group} of order $4$,
+symbolically written $D_4$.
+
+A \defn{field} is a group $(S,+)$ with an additional operation $\cdot$
+satisfying the same rules, along with the fact that for the elements
+$a,b,c\in S$, $a\cdot(b+c) = (a\cdot b)+(a\cdot c)$, called the
+\defn{distributive property}. The rational numbers, real numbers, and
+complex numbers with addition and multiplication are examples of a
+field.
+
+\subsection{The Special Linear Group}
+The \defn{special linear group} is a group composed of the set of
+$n\times n$ matrices whose entries are in some field $F$ and whose
+determinant is the multiplicative identity of the field ($1$ in the
+case of real or rational numbers). We denote this group as
+$\SL_n(F)$. Recall that if an $n\times n$ matrix of real numbers has a
+determinant of $1$, we can regard the matrix as a volume (and
+orientation) preserving linear transformation in $n$-dimensional
+space.
+
+\section{Modular Forms}
+\subsection{The Modular Group}
+Recall that a \defn{M\"obius transformation} is a function
+$f:\mathbb{C}\to\mathbb{C}$ where \[f(z) = \frac{az+b}{cz+d}\] for
+integers $a,b,c,d$ and $ad-bc\neq 0$. We can represent such
+transformations as a matrix
+\[
+\begin{pmatrix}
+a & b\\
+c & d
+\end{pmatrix}
+\]
+such that $ad-bc\neq 0$. One should recognize that
+\[
+\begin{vmatrix}
+  a & b\\
+  c & d
+\end{vmatrix}
+= ad-bc\text,
+\]
+so the M\"obius transformations can be regarded as the set of $2\times
+2$ integer matrices with non-zero determinants.
+
+If we impose the restriction that the determinants need to be $1$,
+then we have formed $\SL_2(\mathbb{Z})$. However, if such matrices
+represent M\"obius transformations, then
+\[
+-
+\begin{pmatrix}
+a & b\\
+c & d
+\end{pmatrix}
+\equiv
+\begin{pmatrix}
+a & b\\
+c & d
+\end{pmatrix}
+\]
+since
+\[
+\frac{(-a)z+(-b)}{(-c)z+(-d)} = \frac{-1}{-1} \cdot \frac{az+b}{cz+d} = \frac{az+b}{cz+d}\text{.}
+\]
+Therefore, we actually form a \defn{quotient group}
+$\SL_2(\mathbb{Z})/\{1,-1\}$, which means that for all elements $x$ in
+the group, $x = -x$. This group is known as the \defn{projective
+  special linear group} of order $2$ over the integers, denoted
+$\PSL_2(\mathbb{Z})$, and is defined by the aformentioned matrices
+with multiplication as the group operator.
+
+In the context of M\"obius transformations, the set of M\"obius
+transformations with $ad-bc=1$, along with the composition
+operator\footnote{Given two functions $f$ and $g$, the composition
+  $f\circ g$ is defined by $(f\circ g)(x) = f(g(x))$.}, forms a group
+called the \defn{modular group}, denoted $\varGamma$. If we define
+$A:z\mapsto -1/z$ and $B:z\mapsto z+1$, then it can be shown that
+$\varGamma$ is generated by $A$ and $B$. Noting that $A^2=(AB)^3=1$,
+we have the presentation \[\varGamma \cong \langle A,B \mid
+A^2=(AB)^3=1\rangle\text.\] If we generate the group with $A$ and $AB$
+instead, then we have $\varGamma\cong C_2*C_3$ where $C_n$ is the
+$n$th order cyclic group.
+
+We generalize the notion of a modular group in the following way. Let
+$n$ and $m$ be positive integers. Define the modular group
+$\varGamma_n(m)$ by
+\begin{equation}
+  \varGamma_n(m) =
+\left\{
+\left.
+\begin{pmatrix}
+a & b\\
+c & d
+\end{pmatrix}
+\in\SL_2(\mathbb{Z})\right\vert
+c\equiv 0 \pmod{m}
+\right\}\text{.}
+\end{equation}
+This definition will prove useful later.
+
+\subsection{Modular Functions}
+A \defn{modular function} is a complex function $f$ such that
+\begin{enumerate}
+  \item $f(\tau)$ is equal to its own Taylor series except at isolated
+  points (i.e., $f$ is meromorphic),
+  \item for every $X\in\PSL_2(\mathbb{Z})$, $f(X\tau) = f(\tau)$, and
+  \item the Fourier expansion of $f(\tau)$ is of the form
+  $\sum_{k=-n}^\infty a_k \ee^{2k\pi\ii\tau}$ for some $n$.
+\end{enumerate}
+One can expect such a function to be extremely symmetrical, since it
+is ``periodic'' with every transformation in $\varGamma$, since
+$\varGamma\cong\PSL_2(\mathbb{Z})$.
+
+We can generalize this by using the generalized notion of a modular
+group. A \defn{modular form of weight $k$ of level $m$}, for integers
+$k$ and $m$, is a holomorphic function $f$ such that for all $\left(
+\begin{smallmatrix}
+a & b\\
+c & d
+\end{smallmatrix}\right)\in\varGamma_0(m)$, and $\Im z > 0$, we
+have \[f\left(\frac{az+b}{cz+d}\right)=(cz+d)^k f(z)\] and $f$ is
+meromorphic as $z\to +\ii\infty$. It can be seen that such modular
+forms have a period of $1$, implying the third point enumerated above.
+
+\section{Elliptic Functions}
+An elliptic function is a complex map which is doubly periodic. Let
+$\omega_1$ and $\omega_2$ be complex numbers. Then $f$ is an
+\defn{elliptic function} if $f(z+\omega_1)=f(z+\omega_2)=f(z)$ for all complex
+$z$. From this, we can conclude that
+$f(z+m\omega_1+n\omega_2)=f(z)$. If $\{x\in\mathbb{Z}\mid
+f(z+x)=f(z)\}$ can be generated entirely by the basis
+$\{\omega_1,\omega_2\}$, then we say $\omega_1$ and $\omega_2$ are
+\defn{fundamental periods}.
+
+The fundamental periods are not unique, for if we have $\omega_1$ and
+$\omega_2$, we can construct the basis $\{a\omega_1+b\omega_2,
+c\omega_1+d\omega_2\}$ for integral $a,b,c,d$ such that $ad-bc=1$. As
+a consequence, $\left(
+\begin{smallmatrix}
+  a & b\\c & d
+\end{smallmatrix}
+\right)$ is an element of the modular group.
+
+\subsection{Weierstrass Elliptic Functions}
+The \defn{Weierstrass elliptic function} is an important elliptic function
+that is sometimes used to canonicalize all elliptic
+functions\footnote{Almost all elliptic functions can be written in
+  terms of the Weierstrass function and its derivative}. For periods
+$\omega_1$ and $\omega_2$, it is defined by
+\begin{equation}
+\wp(z; \omega_1, \omega_2) = \frac{1}{z^2} + \sum_{(i,j)\in\mathbb{Z}^2\setminus(0,0)}
+    \left[\frac{1}{(z-i\omega_1-j\omega_2)} - \frac{1}{(i\omega_1+j\omega_2)^2}\right]\text.
+\end{equation}
+If we define $\wp(z;\tau)=\wp(z;1,\tau)$, then we have
+$\wp(z;\omega_1,\omega_2)=\wp(z/\omega_1;\omega_2/\omega_1)/\omega_1^2$,
+which is expository of its periodicity.
+
+\subsection{Modular Discriminant}
+The Laurent series of the Weierstass function is
+\[
+\wp(z;\omega_1,\omega_2) = \frac{1}{z^2} + \frac{1}{20}g_2 z^2 +
+\frac{1}{28}g_3 z^4 + \mathrm{O}(z^6)
+\]
+for
+\[
+g_2 = 60 \sum_{i,j}\frac{1}{(i\omega_1+j\omega_2)^{4}}
+\]
+and
+\[
+g_3 = 140 \sum_{i,j}\frac{1}{(i\omega_1+j\omega_2)^{6}}\text,
+\]
+which are called \defn{invariants} of the Weierstrass function.
+
+The Weierstrass function is the inverse of the
+function
+\[
+z\mapsto\int_z^\infty\frac{\mathrm{d}t}{\sqrt{4t^3 -
+    g_2t-g_3}}
+\] which implies that $[\wp'(z)]^2=4[\wp(z)]^3-g_2\wp(z)-g_3$ (to
+verify this differential equation, simply compute poles and compare
+the asymptotic expansions). If $y=\wp'(z)$ and $x=\wp(z)$, then we
+have $y^2=4x^3-g_2x-g_3$, an \defn{elliptic curve}. This implies that
+elliptic curves may be parameterized\footnote{Actually, the
+  Weierstrass function lets us map from a torus to the complex plane
+  via $z\mapsto (1,\wp(z),\wp'(z))$.} by $\wp$ and $\wp'$.
+
+Since the values of $g_2$ and $g_3$ determine $\omega_1$ and
+$\omega_2$, \textit{vice versa}, it is plausible that they may be used
+to determine the discriminant of the elliptic curve. Since
+$\mathbb{C}$ is a splitting field for $\mathbb{Z}[x]$, we may write
+a general elliptic curve as $y^2=x(x-1)(x-\lambda)$. From this we
+determine that \[g_2=\frac{\sqrt[3]{4}}{3}(\lambda^2-\lambda+1)\]
+and \[g_3=\frac{1}{27}(\lambda+1)(2\lambda^2-5\lambda+2)\text.\] We
+find therefore that $\lambda^2(\lambda-1)^2=g_2^3 - 27g_3^2$, which is
+called the \defn{modular discriminant}, and is denoted $\Delta$.
+
+One must remember that $g_2$ and $g_3$ are \emph{functions} and
+therefore the discriminant is too. One can show that $\Delta(\tau)$ is
+a modular form of weight $12$ where $\tau=\omega_2/\omega_1$, called
+the \defn{half-period ratio}.
+
+The discriminant of an elliptic curve has a similar role to the
+discriminant of a quadratic function---in this case, the discriminant
+determines whether or not the curve has a node or a cusp.
+\end{document}
