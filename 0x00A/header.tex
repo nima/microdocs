@@ -1,0 +1,74 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%. The Preamble...
+\def\copyrightline{\copyright\- Nima Talebi 2010}
+\newcommand{\theFirstName}{Nima}
+\newcommand{\theLastName}{Talebi}
+\newcommand{\theEmail}{nima@autonomy.net.au}
+\newcommand{\theSubtitle}{Microdocs - Article {\tt\theId}}
+\newcommand{\theInstitute}{Autonomy Corporation Pty Ltd}
+\newcommand\theAuthor{\theFirstName \theLastName}
+%-------------------------------------------------------------------------------
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[
+    pdftitle={\theTitle},
+    pdfsubject={\theSubtitle},
+    pdfauthor={\theAuthor},
+    pdfcreator={\theAuthor},
+    pdfkeywords={\theKeywords},
+    backref,
+    hyperfigures=true,
+    final,
+    bookmarks=false,
+    xetex,
+    dvipdfm,
+    breaklinks,
+    bookmarksopen=true,
+    bookmarksnumbered=true,
+    colorlinks=true,
+    linkcolor=Cyan,
+    anchorcolor=Red,
+    citecolor=ForestGreen,
+    filecolor=Aquamarine,
+    menucolor=Orange,
+    runcolor=Red,
+    urlcolor=LimeGreen
+]{hyperref}
+\InputIfFileExists{preamble.tex}{}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%. The Document...
+\begin{document}
+\begin{article}
+\begin{opening}
+    \title{\theTitle}
+    \runningtitle{\theTitle}
+    \subtitle{\theSubtitle}
+
+    \runningauthor{\theAuthor}
+    \author{\theFirstName\ \surname{\theLastName}\email{\theEmail}}
+    \institute{\theInstitute}
+    \InputIfFileExists{authors.tex}{}{}
+
+    \IfFileExists{motto.tex}{
+        \begin{motto}[prose]
+            \input{motto.tex}
+        \end{motto}
+    }{}
+
+    \begin{abstract}
+        \theAbstract
+    \end{abstract}
+    \keywords{\theKeywords}
+
+    \InputIfFileExists{abbrev.tex}{}{}
+    \InputIfFileExists{nomen.tex}{}{}
+    \InputIfFileExists{dedication.tex}{}{}
+    \InputIfFileExists{classify.tex}{}{}
+    \classification{Microdoc}{\theId}
+    \classification{Version}{\theVersion}
+\end{opening}
+
+%-------------------------------------------------------------------------------
+%. Finish off...
+\addtocounter{tocdepth}{1}
+\tableofcontents
